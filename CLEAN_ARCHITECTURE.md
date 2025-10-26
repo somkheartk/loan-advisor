@@ -95,18 +95,17 @@ UI layer with Flutter widgets. Depends on domain layer use cases.
 
 ## Dependency Rules
 
-```
-Presentation → Domain ← Data
-     ↓           ↑        ↑
-   Domain       ↓        ↓
-     ↓         Data  →  External
-   Nothing            (SharedPreferences)
-```
+- **Presentation Layer** depends on Domain Layer (uses use cases)
+- **Data Layer** depends on Domain Layer (implements repository interfaces)
+- **Domain Layer** has NO dependencies (pure Dart)
+- Dependencies point **inward** toward the domain core
 
-- **Domain layer** has NO dependencies (pure Dart)
-- **Data layer** depends on Domain layer only
-- **Presentation layer** depends on Domain layer only
-- Dependencies point **inward** toward domain
+```
+Presentation Layer ──→ Domain Layer ←── Data Layer
+                          (Core)
+                        ↓ depends on
+                        Nothing
+```
 
 ## Data Flow
 
@@ -245,10 +244,10 @@ The refactoring maintained **100% backward compatibility**:
 - No breaking changes to the UI
 
 Changes made:
-- Moved `UserService` logic to `LocalDataSource` and `AuthRepositoryImpl`
+- Migrated UserService functionality to `LocalDataSource` and `AuthRepositoryImpl`, then removed the original service class
 - Extracted calculation logic from screens to `CalculateLoanUseCase`
 - Screens now use dependency injection for use cases
-- Old `services/` directory removed
+- Old `services/` directory and its contents removed completely
 
 ## Best Practices
 
