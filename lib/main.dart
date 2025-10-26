@@ -17,6 +17,7 @@ class LoanAdvisorApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
+        fontFamily: 'Kanit',
       ),
       home: const AuthCheck(),
       debugShowCheckedModeBanner: false,
