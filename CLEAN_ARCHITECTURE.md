@@ -88,10 +88,31 @@ Handles data access and storage. Implements domain repository interfaces.
 
 UI layer with Flutter widgets. Depends on domain layer use cases.
 
-#### Screens
-- **Authentication**: `LoginScreen`, `RegisterScreen`
-- **Main**: `HomeScreen`, `ProfileScreen`
-- **Calculators**: `HouseLoanCalculator`, `CarLoanCalculator`, `PersonalLoanCalculator`
+#### Screens Organization
+The screens are organized into subdirectories by feature:
+
+- **Authentication** (`auth/`): 
+  - `LoginScreen` - User login
+  - `RegisterScreen` - User registration
+  - `auth_screens.dart` - Export file for auth screens
+
+- **Main** (`main/`):
+  - `HomeScreen` - Main dashboard with calculator navigation
+  - `MainNavigation` - App navigation and settings
+  - `main_screens.dart` - Export file for main screens
+
+- **Calculators** (`calculators/`):
+  - `HouseLoanCalculator` - House loan calculations
+  - `CarLoanCalculator` - Car loan calculations
+  - `PersonalLoanCalculator` - Personal loan calculations
+  - `OtherLoanCalculator` - Other types of loans
+  - `calculator_screens.dart` - Export file for calculator screens
+
+- **Profile** (`profile/`):
+  - `ProfileScreen` - User profile and account management
+  - `profile_screens.dart` - Export file for profile screens
+
+- **Main Export**: `screens.dart` - Single import point for all screens
 
 ## Dependency Rules
 
@@ -170,6 +191,7 @@ Presentation Layer ──→ Domain Layer ←── Data Layer
 ```
 lib/
 ├── main.dart                          # App entry point
+│
 ├── domain/                            # Domain Layer (Pure Dart)
 │   ├── entities/                      # Business objects
 │   │   ├── user.dart
@@ -183,19 +205,32 @@ lib/
 │       ├── logout_usecase.dart
 │       ├── get_current_user_usecase.dart
 │       └── calculate_loan_usecase.dart
+│
 ├── data/                              # Data Layer
 │   ├── datasources/                   # Data sources
 │   │   └── local_data_source.dart
 │   └── repositories/                  # Repository implementations
 │       └── auth_repository_impl.dart
+│
 └── screens/                           # Presentation Layer
-    ├── login_screen.dart
-    ├── register_screen.dart
-    ├── home_screen.dart
-    ├── profile_screen.dart
-    ├── house_loan_calculator.dart
-    ├── car_loan_calculator.dart
-    └── personal_loan_calculator.dart
+    ├── auth/                          # Authentication Screens
+    │   ├── login_screen.dart
+    │   ├── register_screen.dart
+    │   └── auth_screens.dart
+    ├── calculators/                   # Calculator Screens
+    │   ├── house_loan_calculator.dart
+    │   ├── car_loan_calculator.dart
+    │   ├── personal_loan_calculator.dart
+    │   ├── other_loan_calculator.dart
+    │   └── calculator_screens.dart
+    ├── main/                          # Main App Screens
+    │   ├── home_screen.dart
+    │   ├── main_navigation.dart
+    │   └── main_screens.dart
+    ├── profile/                       # Profile Screens
+    │   ├── profile_screen.dart
+    │   └── profile_screens.dart
+    └── screens.dart                   # Main export file
 ```
 
 ## Adding New Features

@@ -97,17 +97,26 @@ Where:
 - n = Number of Payments (Years × 12 or Months)
 ```
 
-### 3. User Data Storage
+### 3. User Data Storage (Clean Architecture Flow)
 ```
-UserService
-    ├── register(email, password, name)
-    ├── login(email, password)
-    ├── logout()
-    └── getCurrentUser()
-        └── SharedPreferences
-            ├── users: List<String> (email|password|name)
-            ├── currentUser: String
-            └── isLoggedIn: bool
+Presentation Layer (Screens)
+    ↓ uses
+Use Cases (Domain Layer)
+    ├── LoginUseCase
+    ├── RegisterUseCase
+    ├── LogoutUseCase
+    └── GetCurrentUserUseCase
+        ↓ depends on
+AuthRepository Interface (Domain Layer)
+        ↓ implemented by
+AuthRepositoryImpl (Data Layer)
+        ↓ uses
+LocalDataSource (Data Layer)
+        ↓ stores in
+SharedPreferences
+    ├── users: List<String> (email|password|name)
+    ├── currentUser: String
+    └── isLoggedIn: bool
 ```
 
 ## Screen Flow Diagram

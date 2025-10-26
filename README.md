@@ -42,17 +42,49 @@ flutter run
 ```
 lib/
 ├── main.dart                 # จุดเริ่มต้นของแอป
-├── screens/                  # หน้าจอต่างๆ
-│   ├── login_screen.dart
-│   ├── register_screen.dart
-│   ├── home_screen.dart
-│   ├── house_loan_calculator.dart
-│   ├── car_loan_calculator.dart
-│   ├── personal_loan_calculator.dart
-│   └── profile_screen.dart
-└── services/                 # บริการต่างๆ
-    └── user_service.dart
+│
+├── domain/                   # Domain Layer (Business Logic)
+│   ├── entities/             # ข้อมูลพื้นฐาน
+│   │   ├── user.dart
+│   │   ├── loan_calculation.dart
+│   │   └── loan_result.dart
+│   ├── repositories/         # Repository Interfaces
+│   │   └── auth_repository.dart
+│   └── usecases/             # Business Logic
+│       ├── login_usecase.dart
+│       ├── register_usecase.dart
+│       ├── logout_usecase.dart
+│       ├── get_current_user_usecase.dart
+│       └── calculate_loan_usecase.dart
+│
+├── data/                     # Data Layer (Data Access)
+│   ├── datasources/          # แหล่งข้อมูล
+│   │   └── local_data_source.dart
+│   └── repositories/         # Repository Implementations
+│       └── auth_repository_impl.dart
+│
+└── screens/                  # Presentation Layer (UI)
+    ├── auth/                 # Authentication Screens
+    │   ├── login_screen.dart
+    │   ├── register_screen.dart
+    │   └── auth_screens.dart
+    ├── calculators/          # Calculator Screens
+    │   ├── house_loan_calculator.dart
+    │   ├── car_loan_calculator.dart
+    │   ├── personal_loan_calculator.dart
+    │   ├── other_loan_calculator.dart
+    │   └── calculator_screens.dart
+    ├── main/                 # Main App Screens
+    │   ├── home_screen.dart
+    │   ├── main_navigation.dart
+    │   └── main_screens.dart
+    ├── profile/              # Profile Screens
+    │   ├── profile_screen.dart
+    │   └── profile_screens.dart
+    └── screens.dart          # Main export file
 ```
+
+> **หมายเหตุ**: แอปพลิเคชันใช้ Clean Architecture เพื่อแยกความรับผิดชอบระหว่าง Business Logic, Data Access และ UI อย่างชัดเจน ดูรายละเอียดเพิ่มเติมใน [CLEAN_ARCHITECTURE.md](CLEAN_ARCHITECTURE.md)
 
 ## การใช้งาน
 
