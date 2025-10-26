@@ -30,10 +30,10 @@ Loan Advisor App
 │   ├── Profile Screen
 │   └── User Service (Local Storage)
 │
-└── Utilities
-    ├── Navigation
-    ├── Form Validation
-    └── Number Formatting
+└── Utilities (embedded in screens/services)
+    ├── Navigation (Material Navigator)
+    ├── Form Validation (Form/Validator widgets)
+    └── Number Formatting (intl package)
 ```
 
 ## Data Flow

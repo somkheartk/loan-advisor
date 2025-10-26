@@ -138,8 +138,8 @@
 ## Interaction Patterns
 
 ### Form Inputs
-- **Text Fields**: Outlined style with icons
-- **Validation**: Inline error messages in red
+- **Text Fields**: Outlined style with prefix icons (in login/register screens)
+- **Validation**: Error messages shown on form submission
 - **Keyboard**: Numeric for numbers, email for email
 - **Focus**: Blue highlight border
 
@@ -198,7 +198,7 @@
 ## Error States
 
 ### Validation Errors
-- Red text below input fields
+- Red text below input fields on form submission
 - Clear, actionable messages in Thai
 
 ### Network/Storage Errors
