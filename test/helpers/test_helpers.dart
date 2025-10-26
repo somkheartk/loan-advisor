@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestHelpers {
+  /// Configure test environment with larger screen size
+  static void configureTestEnvironment(WidgetTester tester) {
+    tester.view.physicalSize = const Size(1200, 1200);
+    tester.view.devicePixelRatio = 1.0;
+  }
+
+  /// Reset test environment after tests
+  static void resetTestEnvironment(WidgetTester tester) {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+  }
+
   /// Create a MaterialApp wrapper for testing widgets
   static Widget createTestApp(Widget child) {
     return MaterialApp(
@@ -11,8 +23,8 @@ class TestHelpers {
       ),
       home: Scaffold(
         body: SizedBox(
-          width: 800,
-          height: 1200, // Increase height to accommodate scrollable content
+          width: 1200, // Increase width to fix off-screen button issues
+          height: 1200, // Maintain height for scrollable content
           child: child,
         ),
       ),

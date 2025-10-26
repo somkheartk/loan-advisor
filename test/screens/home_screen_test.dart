@@ -7,6 +7,9 @@ void main() {
   group('HomeScreen Tests', () {
     testWidgets('Should render home screen with all main elements',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange & Act
       await tester.pumpWidget(TestHelpers.createTestApp(const HomeScreen()));
       await TestHelpers.pumpAndSettleWithTimeout(tester);
@@ -21,6 +24,9 @@ void main() {
       expect(find.text('รถ'), findsOneWidget);
       expect(find.text('บุคคล'), findsOneWidget);
       expect(find.text('อื่นๆ'), findsOneWidget);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should display calculator grid with proper icons',
@@ -94,6 +100,9 @@ void main() {
     testWidgets(
         'Should navigate to house loan calculator when house card is tapped',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange
       await tester.pumpWidget(TestHelpers.createTestApp(const HomeScreen()));
       await TestHelpers.pumpAndSettleWithTimeout(tester);
@@ -110,6 +119,9 @@ void main() {
 
       // Assert - Should navigate to house loan calculator
       expect(find.text('คำนวณสินเชื่อบ้าน'), findsOneWidget);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets(

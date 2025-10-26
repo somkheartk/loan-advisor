@@ -7,6 +7,9 @@ void main() {
   group('HouseLoanCalculator Tests', () {
     testWidgets('Should render house loan calculator with all elements',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange & Act
       await tester
           .pumpWidget(TestHelpers.createTestApp(const HouseLoanCalculator()));
@@ -14,19 +17,20 @@ void main() {
 
       // Assert - Check main elements
       expect(find.text('คำนวณสินเชื่อบ้าน'), findsOneWidget);
-      expect(find.text('คำนวณยอดผ่อนซื้อบ้าน'), findsOneWidget);
+      expect(find.text('คำนวณยอดผ่อนรายเดือน'), findsOneWidget);
       expect(find.text('สินเชื่อบ้าน'), findsOneWidget);
       expect(find.text('คำนวณยอดผ่อน'), findsOneWidget);
 
-      // Check input fields
-      expect(
-          find.byType(TextFormField),
-          findsNWidgets(
-              4)); // House price, down payment, interest rate, loan term
+      // Check input fields - only 3 fields: loan amount, interest rate, loan term
+      expect(find.byType(TextFormField),
+          findsNWidgets(3)); // Loan amount, interest rate, loan term
       expect(find.byIcon(Icons.home), findsWidgets);
-      expect(find.byIcon(Icons.payment), findsWidgets);
+      expect(find.byIcon(Icons.attach_money), findsWidgets); // Updated icon
       expect(find.byIcon(Icons.percent), findsWidgets);
       expect(find.byIcon(Icons.schedule), findsWidgets);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should have proper gradient background',
@@ -76,25 +80,27 @@ void main() {
       await tester.pump();
 
       // Assert - Check validation messages
-      expect(find.text('กรุณากรอกราคาบ้าน'), findsOneWidget);
-      expect(find.text('กรุณากรอกเงินดาวน์'), findsOneWidget);
+      expect(find.text('กรุณากรอกยอดเงินกู้'), findsOneWidget);
       expect(find.text('กรุณากรอกอัตราดอกเบี้ย'), findsOneWidget);
       expect(find.text('กรุณากรอกระยะเวลาผ่อน'), findsOneWidget);
     });
 
-    testWidgets('Should validate down payment not exceeding house price',
+    testWidgets('Should validate positive numbers for inputs',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange
       await tester
           .pumpWidget(TestHelpers.createTestApp(const HouseLoanCalculator()));
       await TestHelpers.pumpAndSettleWithTimeout(tester);
 
-      // Act - Enter down payment greater than house price
+      // Act - Enter valid data
       final textFields = find.byType(TextFormField);
 
-      await tester.enterText(textFields.at(0), '1000000'); // House price
-      await tester.enterText(textFields.at(1),
-          '1500000'); // Down payment (greater than house price)
+      await tester.enterText(textFields.at(0), '1000000'); // Loan amount
+      await tester.enterText(textFields.at(1), '3.5'); // Interest rate
+      await tester.enterText(textFields.at(2), '30'); // Loan term
       await tester.pump();
 
       final calculateButton = find.byWidgetPredicate(
@@ -107,12 +113,18 @@ void main() {
       await tester.tap(calculateButton);
       await tester.pump();
 
-      // Assert - Should show validation error
-      expect(find.text('เงินดาวน์ต้องน้อยกว่าราคาบ้าน'), findsOneWidget);
+      // Assert - Should not show validation errors
+      expect(find.text('กรุณากรอกยอดเงินกู้'), findsNothing);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should calculate monthly payment correctly',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange
       await tester
           .pumpWidget(TestHelpers.createTestApp(const HouseLoanCalculator()));
@@ -121,14 +133,12 @@ void main() {
       // Act - Enter valid calculation data
       final textFields = find.byType(TextFormField);
 
-      await tester.enterText(
-          textFields.at(0), MockCalculatorData.houseLoanPrice.toString());
-      await tester.enterText(
-          textFields.at(1), MockCalculatorData.houseLoanDownPayment.toString());
+      await tester.enterText(textFields.at(0),
+          MockCalculatorData.houseLoanPrice.toString()); // Loan amount
+      await tester.enterText(textFields.at(1),
+          MockCalculatorData.houseLoanInterestRate.toString()); // Interest rate
       await tester.enterText(textFields.at(2),
-          MockCalculatorData.houseLoanInterestRate.toString());
-      await tester.enterText(
-          textFields.at(3), MockCalculatorData.houseLoanTermYears.toString());
+          MockCalculatorData.houseLoanTermYears.toString()); // Loan term years
       await tester.pump();
 
       final calculateButton = find.byWidgetPredicate(
@@ -143,13 +153,15 @@ void main() {
 
       // Assert - Should show results section
       expect(find.text('ผลการคำนวณ'), findsOneWidget);
-      expect(find.text('ยอดกู้'), findsOneWidget);
       expect(find.text('ยอดผ่อนต่อเดือน'), findsOneWidget);
       expect(find.text('ยอดชำระรวมทั้งหมด'), findsOneWidget);
       expect(find.text('ดอกเบี้ยรวม'), findsOneWidget);
 
       // Check that calculated values are displayed (should contain ฿ symbol)
       expect(find.textContaining('฿'), findsWidgets);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should navigate back when back button is pressed',
@@ -179,22 +191,23 @@ void main() {
       // Assert - Check house-specific elements
       expect(find.byIcon(Icons.home), findsWidgets);
 
-      // Check for green color scheme (house loan color)
+      // Check for blue color scheme (house loan color)
       final elevatedButtons =
           tester.widgetList<ElevatedButton>(find.byType(ElevatedButton));
-      bool hasGreenButton = false;
+      bool hasBlueButton = false;
 
       for (final button in elevatedButtons) {
         final buttonStyle = button.style;
         if (buttonStyle != null) {
           final backgroundColor = buttonStyle.backgroundColor?.resolve({});
-          if (backgroundColor == TestHelpers.houseLoanGreen) {
-            hasGreenButton = true;
+          if (backgroundColor == const Color(0xFF4285F4)) {
+            // Primary blue color
+            hasBlueButton = true;
             break;
           }
         }
       }
-      expect(hasGreenButton, isTrue);
+      expect(hasBlueButton, isTrue);
     });
 
     testWidgets('Should format numbers properly in results',
@@ -207,10 +220,9 @@ void main() {
       // Act - Enter valid data and calculate
       final textFields = find.byType(TextFormField);
 
-      await tester.enterText(textFields.at(0), '3000000');
-      await tester.enterText(textFields.at(1), '600000');
-      await tester.enterText(textFields.at(2), '3.5');
-      await tester.enterText(textFields.at(3), '30');
+      await tester.enterText(textFields.at(0), '3000000'); // Loan amount
+      await tester.enterText(textFields.at(1), '3.5'); // Interest rate
+      await tester.enterText(textFields.at(2), '30'); // Loan term
       await tester.pump();
 
       final calculateButton = find.byWidgetPredicate(
@@ -246,8 +258,7 @@ void main() {
       await TestHelpers.pumpAndSettleWithTimeout(tester);
 
       // Assert - Check input section labels
-      expect(find.text('ราคาบ้าน'), findsOneWidget);
-      expect(find.text('เงินดาวน์'), findsOneWidget);
+      expect(find.text('ยอดเงินกู้'), findsOneWidget);
       expect(find.text('อัตราดอกเบี้ย'), findsOneWidget);
       expect(find.text('ระยะเวลาผ่อน'), findsOneWidget);
     });
@@ -274,10 +285,9 @@ void main() {
       // Act - Enter large numbers
       final textFields = find.byType(TextFormField);
 
-      await tester.enterText(textFields.at(0), '50000000'); // 50M house
-      await tester.enterText(textFields.at(1), '10000000'); // 10M down payment
-      await tester.enterText(textFields.at(2), '2.5');
-      await tester.enterText(textFields.at(3), '30');
+      await tester.enterText(textFields.at(0), '50000000'); // 50M loan
+      await tester.enterText(textFields.at(1), '2.5'); // Interest rate
+      await tester.enterText(textFields.at(2), '30'); // Loan term
       await tester.pump();
 
       final calculateButton = find.byWidgetPredicate(
