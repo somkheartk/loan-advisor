@@ -6,6 +6,7 @@
 - ✅ **ย้ายไฟล์ทั้งหมดเรียบร้อย** - แยก screens ออกเป็น 4 folders หลัก
 - ✅ **อัพเดต import paths** - ปรับ paths ในไฟล์หลักทั้งหมด
 - ✅ **สร้าง export files** - ง่ายต่อการ import
+- ✅ **Clean Architecture** - แยก Domain, Data และ Presentation layers
 - ✅ **แอป launch ได้** - ทำงานปกติบน Chrome/Web
 
 ### 🎨 การปรับปรุง UI/UX
@@ -13,7 +14,14 @@
 - ✅ **ปรับปรุง Profile Screen** - UI สวยงาม มี about dialog
 - ✅ **ปรับปรุง Settings** - รวมอยู่ใน MainNavigation
 
-### 📁 โครงสร้างใหม่
+### 📁 โครงสร้างปัจจุบัน
+
+**Clean Architecture** - แบ่งเป็น 3 layers หลัก:
+- 🏛️ `domain/` - Business Logic (entities, usecases, repositories)
+- 💾 `data/` - Data Access (datasources, repository implementations)
+- 🎨 `screens/` - Presentation Layer (UI organized by features)
+
+**Screens Organization:**
 ```
 lib/screens/
 ├── 🔐 auth/                     ✅ เรียบร้อย
@@ -39,6 +47,8 @@ lib/screens/
 │
 └── 📋 screens.dart              ✅ เรียบร้อย
 ```
+
+> See [CLEAN_ARCHITECTURE.md](CLEAN_ARCHITECTURE.md) for complete architecture details.
 
 ## ⚠️ สิ่งที่ต้องแก้ไข
 
