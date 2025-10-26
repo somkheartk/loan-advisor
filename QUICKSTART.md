@@ -149,26 +149,57 @@ flutter run
 loan-advisor/
 ├── lib/
 │   ├── main.dart                           # App entry point
-│   ├── screens/                            # UI screens
-│   │   ├── login_screen.dart              # Login page
-│   │   ├── register_screen.dart           # Registration page
-│   │   ├── home_screen.dart               # Main dashboard
-│   │   ├── house_loan_calculator.dart     # House loan calculator
-│   │   ├── car_loan_calculator.dart       # Car loan calculator
-│   │   ├── personal_loan_calculator.dart  # Personal loan calculator
-│   │   └── profile_screen.dart            # User profile
-│   └── services/
-│       └── user_service.dart              # Authentication service
+│   ├── domain/                             # Domain Layer (Business Logic)
+│   │   ├── entities/                       # Business objects
+│   │   │   ├── user.dart
+│   │   │   ├── loan_calculation.dart
+│   │   │   └── loan_result.dart
+│   │   ├── repositories/                   # Repository interfaces
+│   │   │   └── auth_repository.dart
+│   │   └── usecases/                       # Business logic
+│   │       ├── login_usecase.dart
+│   │       ├── register_usecase.dart
+│   │       ├── logout_usecase.dart
+│   │       ├── get_current_user_usecase.dart
+│   │       └── calculate_loan_usecase.dart
+│   ├── data/                               # Data Layer (Data Access)
+│   │   ├── datasources/
+│   │   │   └── local_data_source.dart      # SharedPreferences
+│   │   └── repositories/
+│   │       └── auth_repository_impl.dart   # Repository implementation
+│   └── screens/                            # Presentation Layer (UI)
+│       ├── auth/                           # Authentication screens
+│       │   ├── login_screen.dart
+│       │   ├── register_screen.dart
+│       │   └── auth_screens.dart
+│       ├── calculators/                    # Calculator screens
+│       │   ├── house_loan_calculator.dart
+│       │   ├── car_loan_calculator.dart
+│       │   ├── personal_loan_calculator.dart
+│       │   ├── other_loan_calculator.dart
+│       │   └── calculator_screens.dart
+│       ├── main/                           # Main screens
+│       │   ├── home_screen.dart
+│       │   ├── main_navigation.dart
+│       │   └── main_screens.dart
+│       ├── profile/                        # Profile screens
+│       │   ├── profile_screen.dart
+│       │   └── profile_screens.dart
+│       └── screens.dart                    # Main export file
 ├── test/
-│   └── widget_test.dart                   # Widget tests
-├── pubspec.yaml                           # Dependencies
-├── README.md                              # Main documentation
-├── FEATURES.md                            # Feature details
-├── ARCHITECTURE.md                        # Technical architecture
-├── DESIGN.md                              # Design specifications
-├── SHOWCASE.md                            # Project showcase
-└── QUICKSTART.md                          # This file
+│   └── widget_test.dart                    # Widget tests
+├── pubspec.yaml                            # Dependencies
+├── README.md                               # Main documentation
+├── FEATURES.md                             # Feature details
+├── ARCHITECTURE.md                         # Technical architecture
+├── CLEAN_ARCHITECTURE.md                   # Clean Architecture details
+├── FOLDER_STRUCTURE.md                     # Detailed folder structure
+├── DESIGN.md                               # Design specifications
+├── SHOWCASE.md                             # Project showcase
+└── QUICKSTART.md                           # This file
 ```
+
+> **Note**: The project uses Clean Architecture with 3 layers (Domain, Data, Presentation). See [CLEAN_ARCHITECTURE.md](CLEAN_ARCHITECTURE.md) for details.
 
 ## Configuration
 
