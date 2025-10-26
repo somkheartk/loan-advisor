@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/user_service.dart';
+import '../domain/usecases/get_current_user_usecase.dart';
+import '../domain/usecases/logout_usecase.dart';
+import '../data/repositories/auth_repository_impl.dart';
+import '../data/datasources/local_data_source.dart';
 import 'house_loan_calculator.dart';
 import 'car_loan_calculator.dart';
 import 'personal_loan_calculator.dart';
@@ -14,26 +17,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _userService = UserService();
+  late final GetCurrentUserUseCase _getCurrentUserUseCase;
+  late final LogoutUseCase _logoutUseCase;
   String _userName = '';
 
   @override
   void initState() {
     super.initState();
+    final dataSource = LocalDataSource();
+    final repository = AuthRepositoryImpl(dataSource);
+    _getCurrentUserUseCase = GetCurrentUserUseCase(repository);
+    _logoutUseCase = LogoutUseCase(repository);
     _loadUserName();
   }
 
   Future<void> _loadUserName() async {
-    final user = await _userService.getCurrentUser();
+    final user = await _getCurrentUserUseCase.execute();
     if (user != null && mounted) {
       setState(() {
-        _userName = user['name'] ?? '';
+        _userName = user.name;
       });
     }
   }
 
   Future<void> _logout() async {
-    await _userService.logout();
+    await _logoutUseCase.execute();
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const LoginScreen()),

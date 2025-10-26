@@ -1,5 +1,23 @@
 # Flutter App Architecture
 
+**Note:** This app has been refactored to follow **Clean Architecture** principles. For detailed information about the new architecture, see [CLEAN_ARCHITECTURE.md](CLEAN_ARCHITECTURE.md).
+
+## Clean Architecture Overview
+
+The application is now structured in three main layers:
+
+### 1. **Domain Layer** (Business Logic)
+- **Entities**: User, LoanCalculation, LoanResult
+- **Use Cases**: Login, Register, Logout, GetCurrentUser, CalculateLoan
+- **Repositories**: Interfaces for data access (AuthRepository)
+
+### 2. **Data Layer** (Data Access)
+- **Data Sources**: LocalDataSource (SharedPreferences)
+- **Repository Implementations**: AuthRepositoryImpl
+
+### 3. **Presentation Layer** (UI)
+- **Screens**: All Flutter widgets and UI components
+
 ## Application Structure
 
 ```
@@ -146,21 +164,27 @@ UserService
 
 ## Design Patterns Used
 
-1. **MVC-like Architecture**
-   - Models: User data structures
-   - Views: Screen widgets
-   - Controllers: Services (UserService)
+1. **Clean Architecture**
+   - Domain Layer: Pure business logic
+   - Data Layer: Repository pattern
+   - Presentation Layer: UI components
 
-2. **Service Pattern**
-   - UserService handles all auth operations
+2. **Repository Pattern**
+   - AuthRepository interface in domain layer
+   - AuthRepositoryImpl in data layer
+   - Abstracts data source details
 
-3. **Widget Composition**
-   - Reusable card widgets
-   - Consistent form fields
-   - Shared result displays
+3. **Use Case Pattern**
+   - Each business operation is a separate use case
+   - Single Responsibility Principle
+   - Easy to test and maintain
 
-4. **Separation of Concerns**
-   - Screens (UI)
-   - Services (Business Logic)
-   - Models (Data)
-   - Utils (Helpers)
+4. **Dependency Injection**
+   - Use cases depend on repository interfaces
+   - Screens inject required use cases
+   - Loose coupling between layers
+
+5. **Separation of Concerns**
+   - Domain (business logic) → independent of frameworks
+   - Data (storage) → implements domain interfaces
+   - Presentation (UI) → uses domain use cases

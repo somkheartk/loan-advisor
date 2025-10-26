@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/user_service.dart';
+import '../domain/usecases/get_current_user_usecase.dart';
+import '../data/repositories/auth_repository_impl.dart';
+import '../data/datasources/local_data_source.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -9,22 +11,25 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final _userService = UserService();
+  late final GetCurrentUserUseCase _getCurrentUserUseCase;
   String _userName = '';
   String _userEmail = '';
 
   @override
   void initState() {
     super.initState();
+    final dataSource = LocalDataSource();
+    final repository = AuthRepositoryImpl(dataSource);
+    _getCurrentUserUseCase = GetCurrentUserUseCase(repository);
     _loadUserInfo();
   }
 
   Future<void> _loadUserInfo() async {
-    final user = await _userService.getCurrentUser();
+    final user = await _getCurrentUserUseCase.execute();
     if (user != null && mounted) {
       setState(() {
-        _userName = user['name'] ?? '';
-        _userEmail = user['email'] ?? '';
+        _userName = user.name;
+        _userEmail = user.email;
       });
     }
   }

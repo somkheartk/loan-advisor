@@ -1,11 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserService {
+class LocalDataSource {
   static const String _usersKey = 'users';
   static const String _currentUserKey = 'currentUser';
   static const String _isLoggedInKey = 'isLoggedIn';
 
-  Future<bool> register(String email, String password, String name) async {
+  Future<bool> saveUser(String email, String password, String name) async {
     final prefs = await SharedPreferences.getInstance();
     final users = prefs.getStringList(_usersKey) ?? [];
     
@@ -22,7 +22,7 @@ class UserService {
     return true;
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> authenticateUser(String email, String password) async {
     final prefs = await SharedPreferences.getInstance();
     final users = prefs.getStringList(_usersKey) ?? [];
     
@@ -37,7 +37,7 @@ class UserService {
     return false;
   }
 
-  Future<void> logout() async {
+  Future<void> clearCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_currentUserKey);
     await prefs.setBool(_isLoggedInKey, false);
@@ -53,5 +53,10 @@ class UserService {
       'email': parts[0],
       'name': parts.length > 2 ? parts[2] : parts[0],
     };
+  }
+
+  Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_isLoggedInKey) ?? false;
   }
 }
