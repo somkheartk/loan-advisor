@@ -1,0 +1,8 @@
+# Simple icon using text for now - we'll generate the actual PNG
+# This is a placeholder for the app icon configuration
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#2196F3"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"

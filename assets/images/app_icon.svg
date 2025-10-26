@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#2196F3" stroke="#1976D2" stroke-width="8"/>
+  
+  <!-- Calculator body -->
+  <rect x="180" y="140" width="152" height="200" rx="12" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2"/>
+  
+  <!-- Screen -->
+  <rect x="195" y="155" width="122" height="40" rx="4" fill="#263238"/>
+  
+  <!-- Display text -->
+  <text x="256" y="180" text-anchor="middle" fill="#4CAF50" font-family="Arial, sans-serif" font-size="18" font-weight="bold">฿15,000</text>
+  
+  <!-- Calculator buttons -->
+  <!-- Row 1 -->
+  <circle cx="210" cy="220" r="12" fill="#E3F2FD"/>
+  <circle cx="240" cy="220" r="12" fill="#E3F2FD"/>
+  <circle cx="270" cy="220" r="12" fill="#E3F2FD"/>
+  <circle cx="300" cy="220" r="12" fill="#FF9800"/>
+  
+  <!-- Row 2 -->
+  <circle cx="210" cy="250" r="12" fill="#E3F2FD"/>
+  <circle cx="240" cy="250" r="12" fill="#E3F2FD"/>
+  <circle cx="270" cy="250" r="12" fill="#E3F2FD"/>
+  <circle cx="300" cy="250" r="12" fill="#FF9800"/>
+  
+  <!-- Row 3 -->
+  <circle cx="210" cy="280" r="12" fill="#E3F2FD"/>
+  <circle cx="240" cy="280" r="12" fill="#E3F2FD"/>
+  <circle cx="270" cy="280" r="12" fill="#E3F2FD"/>
+  <circle cx="300" cy="280" r="12" fill="#FF9800"/>
+  
+  <!-- Row 4 -->
+  <circle cx="210" cy="310" r="12" fill="#E3F2FD"/>
+  <circle cx="240" cy="310" r="12" fill="#E3F2FD"/>
+  <circle cx="270" cy="310" r="12" fill="#E3F2FD"/>
+  <circle cx="300" cy="310" r="12" fill="#4CAF50"/>
+  
+  <!-- Money symbols -->
+  <!-- Coin 1 -->
+  <circle cx="140" cy="180" r="25" fill="#FFD700" stroke="#FFC107" stroke-width="2"/>
+  <text x="140" y="185" text-anchor="middle" fill="#FF8F00" font-family="Arial, sans-serif" font-size="16" font-weight="bold">฿</text>
+  
+  <!-- Coin 2 -->
+  <circle cx="370" cy="280" r="20" fill="#FFD700" stroke="#FFC107" stroke-width="2"/>
+  <text x="370" y="285" text-anchor="middle" fill="#FF8F00" font-family="Arial, sans-serif" font-size="14" font-weight="bold">$</text>
+  
+  <!-- Percentage symbol -->
+  <text x="350" y="200" fill="#4CAF50" font-family="Arial, sans-serif" font-size="24" font-weight="bold">%</text>
+  
+  <!-- House icon -->
+  <path d="M120 320 L120 380 L160 380 L160 320 L140 300 Z" fill="#FF5722"/>
+  <path d="M115 325 L145 300 L165 325" stroke="#D32F2F" stroke-width="3" fill="none"/>
+  
+  <!-- Car icon -->
+  <rect x="360" y="340" width="40" height="20" rx="10" fill="#607D8B"/>
+  <circle cx="370" cy="365" r="8" fill="#424242"/>
+  <circle cx="390" cy="365" r="8" fill="#424242"/>
+  
+  <!-- Title text at bottom -->
+  <text x="256" y="420" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="18" font-weight="bold">LOAN</text>
+  <text x="256" y="445" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16">ADVISOR</text>
+</svg>

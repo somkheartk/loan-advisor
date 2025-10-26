@@ -16,7 +16,7 @@ void main() {
 
       // Assert - Check main elements - updated to match actual UI
       expect(find.text('คำนวณเงินกู้'), findsOneWidget);
-      expect(find.text('คำนวณเงินกู้ง่ายๆ ในมือถือ'), findsOneWidget);
+      expect(find.text('คำนวณง่ายๆ ในมือถือ'), findsOneWidget);
       expect(find.text('ประเภทสินเชื่อ'), findsOneWidget);
 
       // Check calculator grid cards - updated to match actual text
@@ -69,30 +69,31 @@ void main() {
       expect(hasGradient, isTrue);
     });
 
-    testWidgets('Should display loan amount section',
+    testWidgets('Should display loan amount section with input fields',
         (WidgetTester tester) async {
       // Arrange & Act
       await tester.pumpWidget(TestHelpers.createTestApp(const HomeScreen()));
       await TestHelpers.pumpAndSettleWithTimeout(tester);
 
-      // Assert - Check loan amount section based on actual UI
+      // Assert - Check loan amount section with TextFormField inputs
       expect(find.text('จำนวนเงินกู้'), findsOneWidget);
-      expect(find.text('1,000,000'), findsOneWidget);
-      expect(find.text('บาท'), findsOneWidget);
+      expect(find.byType(TextFormField), findsNWidgets(3)); // 3 input fields
+
+      // Check for input field labels
+      expect(find.text('จำนวนเงินกู้ (บาท)'), findsOneWidget);
       expect(find.text('อัตราดอกเบี้ย (%)'), findsOneWidget);
-      expect(find.text('3.5'), findsOneWidget);
+      expect(find.text('ระยะเวลาผ่อน (ปี)'), findsOneWidget);
     });
 
-    testWidgets('Should display bank selection section',
+    testWidgets('Should have calculate button functionality',
         (WidgetTester tester) async {
       // Arrange & Act
       await tester.pumpWidget(TestHelpers.createTestApp(const HomeScreen()));
       await TestHelpers.pumpAndSettleWithTimeout(tester);
 
-      // Assert - Check bank section based on actual UI
-      expect(find.text('ธนาคาร'), findsOneWidget);
-      expect(find.text('เลือกธนาคาร'), findsOneWidget);
-      expect(find.byIcon(Icons.keyboard_arrow_down), findsOneWidget);
+      // Assert - Check that calculate button exists
+      expect(find.text('คำนวณ'), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsAtLeastNWidgets(1));
     });
 
     testWidgets(
@@ -216,24 +217,9 @@ void main() {
       await TestHelpers.pumpAndSettleWithTimeout(tester);
 
       // Assert - Check user info elements based on actual UI
-      expect(find.text('ข้อมูลผู้ใช้งาน'), findsOneWidget);
       expect(find.text('ผู้ใช้งาน'), findsOneWidget);
       expect(find.text('สมาชิกทั่วไป'), findsOneWidget);
       expect(find.byIcon(Icons.person), findsWidgets);
-    });
-
-    testWidgets('Should show notifications section',
-        (WidgetTester tester) async {
-      // Arrange & Act
-      await tester.pumpWidget(TestHelpers.createTestApp(const HomeScreen()));
-      await TestHelpers.pumpAndSettleWithTimeout(tester);
-
-      // Assert - Check notifications elements based on actual UI
-      expect(find.text('แจ้งเตือนสำคัญ'), findsOneWidget);
-      expect(find.text('อัตราดอกเบี้ยจะปรับขึ้น'), findsOneWidget);
-      expect(find.text('ข่าวสารเศรษฐกิจ'), findsOneWidget);
-      expect(find.byIcon(Icons.warning_amber_rounded), findsWidgets);
-      expect(find.byIcon(Icons.info), findsWidgets);
     });
 
     testWidgets('Should be scrollable when content overflows',

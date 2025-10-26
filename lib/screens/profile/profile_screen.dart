@@ -70,238 +70,268 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF4285F4), // Google Blue
-              Color(0xFF8E24AA), // Purple
-            ],
+    return WillPopScope(
+      onWillPop: () async {
+        // ถ้ากด back ให้กลับไปหน้าที่มาก่อนหน้า หรือหน้า home
+        if (Navigator.of(context).canPop()) {
+          Navigator.pop(context);
+        } else {
+          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        }
+        return false;
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF4285F4), // Google Blue
+                Color(0xFF8E24AA), // Purple
+              ],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      'โปรไฟล์',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      // Back button
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).canPop()
+                              ? Navigator.pop(context)
+                              : Navigator.of(context).pushNamedAndRemoveUntil(
+                                  '/', (route) => false);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.logout,
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.person,
                         color: Colors.white,
-                        size: 24,
+                        size: 28,
                       ),
-                      onPressed: _logout,
-                      tooltip: 'ออกจากระบบ',
-                    ),
-                  ],
-                ),
-              ),
-
-              // Main Content
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                    ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'โปรไฟล์',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.logout,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        onPressed: _logout,
+                        tooltip: 'ออกจากระบบ',
+                      ),
+                    ],
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Profile Avatar Section
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                const Color(0xFF4285F4).withOpacity(0.1),
-                                const Color(0xFF8E24AA).withOpacity(0.1),
+                ),
+
+                // Main Content
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // Profile Avatar Section
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color(0xFF4285F4).withOpacity(0.1),
+                                  const Color(0xFF8E24AA).withOpacity(0.1),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: const Color(0xFF4285F4).withOpacity(0.3),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF4285F4),
+                                        Color(0xFF8E24AA)
+                                      ],
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _userName.isNotEmpty ? _userName : 'ผู้ใช้',
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF333333),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _userEmail.isNotEmpty
+                                      ? _userEmail
+                                      : 'user@example.com',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF666666),
+                                  ),
+                                ),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: const Color(0xFF4285F4).withOpacity(0.3),
-                            ),
                           ),
-                          child: Column(
+
+                          const SizedBox(height: 32),
+
+                          // Personal Information Section
+                          _buildInfoSection(
+                            title: 'ข้อมูลส่วนตัว',
+                            icon: Icons.person_outline,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFF4285F4),
-                                      Color(0xFF8E24AA)
-                                    ],
-                                  ),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Colors.white,
-                                ),
+                              _buildInfoTile(
+                                icon: Icons.badge,
+                                title: 'ชื่อ-นามสกุล',
+                                subtitle: _userName.isNotEmpty
+                                    ? _userName
+                                    : 'ไม่ระบุ',
+                                onTap: () => _showEditDialog('name'),
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                _userName.isNotEmpty ? _userName : 'ผู้ใช้',
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _userEmail.isNotEmpty
+                              _buildInfoTile(
+                                icon: Icons.email_outlined,
+                                title: 'อีเมล',
+                                subtitle: _userEmail.isNotEmpty
                                     ? _userEmail
-                                    : 'user@example.com',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xFF666666),
-                                ),
+                                    : 'ไม่ระบุ',
+                                onTap: () => _showEditDialog('email'),
+                              ),
+                              _buildInfoTile(
+                                icon: Icons.phone_outlined,
+                                title: 'เบอร์โทรศัพท์',
+                                subtitle: 'ยังไม่ได้ระบุ',
+                                onTap: () => _showEditDialog('phone'),
                               ),
                             ],
                           ),
-                        ),
 
-                        const SizedBox(height: 32),
+                          const SizedBox(height: 24),
 
-                        // Personal Information Section
-                        _buildInfoSection(
-                          title: 'ข้อมูลส่วนตัว',
-                          icon: Icons.person_outline,
-                          children: [
-                            _buildInfoTile(
-                              icon: Icons.badge,
-                              title: 'ชื่อ-นามสกุล',
-                              subtitle:
-                                  _userName.isNotEmpty ? _userName : 'ไม่ระบุ',
-                              onTap: () => _showEditDialog('name'),
-                            ),
-                            _buildInfoTile(
-                              icon: Icons.email_outlined,
-                              title: 'อีเมล',
-                              subtitle: _userEmail.isNotEmpty
-                                  ? _userEmail
-                                  : 'ไม่ระบุ',
-                              onTap: () => _showEditDialog('email'),
-                            ),
-                            _buildInfoTile(
-                              icon: Icons.phone_outlined,
-                              title: 'เบอร์โทรศัพท์',
-                              subtitle: 'ยังไม่ได้ระบุ',
-                              onTap: () => _showEditDialog('phone'),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // App Information Section
-                        _buildInfoSection(
-                          title: 'เกี่ยวกับแอป',
-                          icon: Icons.info_outline,
-                          children: [
-                            _buildInfoTile(
-                              icon: Icons.apps,
-                              title: 'เวอร์ชันแอป',
-                              subtitle: '1.0.0',
-                              onTap: null,
-                            ),
-                            _buildInfoTile(
-                              icon: Icons.description_outlined,
-                              title: 'เกี่ยวกับ Loan Advisor',
-                              subtitle: 'ข้อมูลเพิ่มเติมเกี่ยวกับแอป',
-                              onTap: _showAboutDialog,
-                            ),
-                            _buildInfoTile(
-                              icon: Icons.help_outline,
-                              title: 'วิธีใช้งาน',
-                              subtitle: 'คำแนะนำการใช้งานแอป',
-                              onTap: _showHelpDialog,
-                            ),
-                            _buildInfoTile(
-                              icon: Icons.privacy_tip_outlined,
-                              title: 'นโยบายความเป็นส่วนตัว',
-                              subtitle: 'อ่านนโยบายความเป็นส่วนตัว',
-                              onTap: _showPrivacyDialog,
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Logout Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _logout,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFEA4335),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                          // App Information Section
+                          _buildInfoSection(
+                            title: 'เกี่ยวกับแอป',
+                            icon: Icons.info_outline,
+                            children: [
+                              _buildInfoTile(
+                                icon: Icons.apps,
+                                title: 'เวอร์ชันแอป',
+                                subtitle: '1.0.0',
+                                onTap: null,
                               ),
-                              elevation: 2,
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.logout, size: 20),
-                                SizedBox(width: 8),
-                                Text(
-                                  'ออกจากระบบ',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              _buildInfoTile(
+                                icon: Icons.description_outlined,
+                                title: 'เกี่ยวกับ Loan Advisor',
+                                subtitle: 'ข้อมูลเพิ่มเติมเกี่ยวกับแอป',
+                                onTap: _showAboutDialog,
+                              ),
+                              _buildInfoTile(
+                                icon: Icons.help_outline,
+                                title: 'วิธีใช้งาน',
+                                subtitle: 'คำแนะนำการใช้งานแอป',
+                                onTap: _showHelpDialog,
+                              ),
+                              _buildInfoTile(
+                                icon: Icons.privacy_tip_outlined,
+                                title: 'นโยบายความเป็นส่วนตัว',
+                                subtitle: 'อ่านนโยบายความเป็นส่วนตัว',
+                                onTap: _showPrivacyDialog,
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // Logout Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _logout,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFEA4335),
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              ],
+                                elevation: 2,
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.logout, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'ออกจากระบบ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(
-                            height: 100), // Bottom padding for navigation
-                      ],
+                          const SizedBox(
+                              height: 100), // Bottom padding for navigation
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      ), // ปิด Scaffold
+    ); // ปิด WillPopScope
   }
 
   Widget _buildInfoSection({
