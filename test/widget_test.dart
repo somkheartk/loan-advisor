@@ -28,4 +28,16 @@ void main() {
     expect(find.text('สมัครสมาชิก'), findsWidgets);
     expect(find.text('สร้างบัญชีใหม่'), findsOneWidget);
   });
+
+  testWidgets('App uses Kanit font family', (WidgetTester tester) async {
+    // Build our app and trigger a frame
+    await tester.pumpWidget(const LoanAdvisorApp());
+    await tester.pumpAndSettle();
+
+    // Get the MaterialApp widget
+    final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    
+    // Verify that Kanit font is set as the default font family
+    expect(materialApp.theme?.fontFamily, 'Kanit');
+  });
 }
