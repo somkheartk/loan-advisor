@@ -3,51 +3,32 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
-class PersonalLoanCalculator extends StatefulWidget {
-  const PersonalLoanCalculator({super.key});
+class CarLoanCalculator extends StatefulWidget {
+  const CarLoanCalculator({super.key});
 
   @override
-  State<PersonalLoanCalculator> createState() => _PersonalLoanCalculatorState();
+  State<CarLoanCalculator> createState() => _CarLoanCalculatorState();
 }
 
-class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
+class _CarLoanCalculatorState extends State<CarLoanCalculator> {
   final _formKey = GlobalKey<FormState>();
-  final _loanAmountController = TextEditingController();
+  final _carPriceController = TextEditingController();
+  final _downPaymentController = TextEditingController();
   final _interestRateController = TextEditingController();
   final _loanTermController = TextEditingController();
 
   double _monthlyPayment = 0;
   double _totalPayment = 0;
   double _totalInterest = 0;
+  double _loanAmount = 0;
 
   @override
   void dispose() {
-    _loanAmountController.dispose();
+    _carPriceController.dispose();
+    _downPaymentController.dispose();
     _interestRateController.dispose();
     _loanTermController.dispose();
     super.dispose();
-  }
-
-  void _calculate() {
-    if (_formKey.currentState!.validate()) {
-      final loanAmount =
-          double.parse(_loanAmountController.text.replaceAll(',', ''));
-      final interestRate = double.parse(_interestRateController.text);
-      final loanTermYears = int.parse(_loanTermController.text);
-
-      setState(() {
-        final monthlyInterestRate = interestRate / 100 / 12;
-        final numberOfPayments = loanTermYears * 12;
-
-        _monthlyPayment = loanAmount *
-            (monthlyInterestRate *
-                math.pow(1 + monthlyInterestRate, numberOfPayments)) /
-            (math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
-
-        _totalPayment = _monthlyPayment * numberOfPayments;
-        _totalInterest = _totalPayment - loanAmount;
-      });
-    }
   }
 
   @override
@@ -78,14 +59,27 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
                         color: Colors.white,
                         size: 24,
                       ),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        // กลับไปหน้าหลักแทนการ pop
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        } else {
+                          // ถ้าไม่สามารถ pop ได้ ให้แจ้งว่าอยู่หน้าหลักแล้ว
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('อยู่ในหน้าหลักแล้ว'),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(width: 8),
                     const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'คำนวณสินเชื่อบุคคล',
+                          'คำนวณสินเชื่อรถยนต์',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -93,7 +87,7 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
                           ),
                         ),
                         Text(
-                          'คำนวณยอดผ่อนสินเชื่อส่วนบุคคล',
+                          'คำนวณยอดผ่อนรถยนต์',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 12,
@@ -123,20 +117,20 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Personal Loan Icon and Title
+                          // Car Icon and Title
                           Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color:
-                                      const Color(0xFFFF9800).withOpacity(0.1),
+                                      const Color(0xFF34A853).withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
-                                  Icons.person,
+                                  Icons.directions_car,
                                   size: 24,
-                                  color: Color(0xFFFF9800),
+                                  color: Color(0xFF34A853),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -144,7 +138,7 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'สินเชื่อบุคคล',
+                                    'สินเชื่อรถยนต์',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -152,7 +146,7 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
                                     ),
                                   ),
                                   Text(
-                                    'คำนวณการกู้ยืมเงินส่วนบุคคล',
+                                    'คำนวณการผ่อนซื้อรถยนต์',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
@@ -165,20 +159,51 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
 
                           const SizedBox(height: 24),
 
-                          // Loan Amount Input
+                          // Car Price Input
                           _buildInputSection(
-                            title: 'จำนวนเงินกู้',
-                            controller: _loanAmountController,
-                            hintText: 'ระบุจำนวนเงินที่ต้องการกู้',
+                            title: 'ราคารถยนต์',
+                            controller: _carPriceController,
+                            hintText: 'ระบุราคารถยนต์',
                             suffixText: 'บาท',
-                            icon: Icons.account_balance_wallet,
+                            icon: Icons.directions_car,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'กรุณากรอกจำนวนเงินกู้';
+                                return 'กรุณากรอกราคารถยนต์';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Down Payment Input
+                          _buildInputSection(
+                            title: 'เงินดาวน์',
+                            controller: _downPaymentController,
+                            hintText: 'ระบุจำนวนเงินดาวน์',
+                            suffixText: 'บาท',
+                            icon: Icons.payment,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'กรุณากรอกเงินดาวน์';
+                              }
+                              final downPayment =
+                                  double.parse(value.replaceAll(',', ''));
+                              final carPrice = double.tryParse(
+                                    _carPriceController.text
+                                        .replaceAll(',', ''),
+                                  ) ??
+                                  0;
+                              if (downPayment >= carPrice) {
+                                return 'เงินดาวน์ต้องน้อยกว่าราคารถ';
                               }
                               return null;
                             },
@@ -232,7 +257,7 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
                             child: ElevatedButton(
                               onPressed: _calculate,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF9800),
+                                backgroundColor: const Color(0xFF34A853),
                                 foregroundColor: Colors.white,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
@@ -271,6 +296,32 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
     );
   }
 
+  void _calculate() {
+    if (_formKey.currentState!.validate()) {
+      final carPrice =
+          double.parse(_carPriceController.text.replaceAll(',', ''));
+      final downPayment =
+          double.parse(_downPaymentController.text.replaceAll(',', ''));
+      final interestRate = double.parse(_interestRateController.text);
+      final loanTermYears = int.parse(_loanTermController.text);
+
+      setState(() {
+        _loanAmount = carPrice - downPayment;
+
+        final monthlyInterestRate = interestRate / 100 / 12;
+        final numberOfPayments = loanTermYears * 12;
+
+        _monthlyPayment = _loanAmount *
+            (monthlyInterestRate *
+                math.pow(1 + monthlyInterestRate, numberOfPayments)) /
+            (math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+
+        _totalPayment = _monthlyPayment * numberOfPayments;
+        _totalInterest = _totalPayment - _loanAmount;
+      });
+    }
+  }
+
   Widget _buildInputSection({
     required String title,
     required TextEditingController controller,
@@ -307,7 +358,7 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: TextStyle(color: Colors.grey.shade500),
-              prefixIcon: Icon(icon, color: const Color(0xFFFF9800)),
+              prefixIcon: Icon(icon, color: const Color(0xFF34A853)),
               suffixText: suffixText,
               suffixStyle: const TextStyle(
                 color: Color(0xFF666666),
@@ -331,13 +382,13 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFFF9800).withOpacity(0.1),
+            const Color(0xFF34A853).withOpacity(0.1),
             const Color(0xFF4285F4).withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFFF9800).withOpacity(0.3),
+          color: const Color(0xFF34A853).withOpacity(0.3),
         ),
       ),
       child: Column(
@@ -348,7 +399,7 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF9800),
+                  color: const Color(0xFF34A853),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -370,10 +421,17 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
           ),
           const SizedBox(height: 16),
           _buildResultItem(
+            'ยอดกู้',
+            '฿${NumberFormat('#,##0.00', 'en_US').format(_loanAmount)}',
+            Icons.money,
+            const Color(0xFF666666),
+          ),
+          const Divider(height: 24, color: Color(0xFFE0E0E0)),
+          _buildResultItem(
             'ยอดผ่อนต่อเดือน',
             '฿${NumberFormat('#,##0.00', 'en_US').format(_monthlyPayment)}',
             Icons.payment,
-            const Color(0xFFFF9800),
+            const Color(0xFF34A853),
             isHighlight: true,
           ),
           const Divider(height: 24, color: Color(0xFFE0E0E0)),

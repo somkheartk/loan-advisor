@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../domain/usecases/get_current_user_usecase.dart';
-import '../domain/usecases/logout_usecase.dart';
-import '../data/repositories/auth_repository_impl.dart';
-import '../data/datasources/local_data_source.dart';
-import 'house_loan_calculator.dart';
-import 'car_loan_calculator.dart';
-import 'personal_loan_calculator.dart';
-import 'other_loan_calculator.dart';
-import 'profile_screen.dart';
-import 'login_screen.dart';
+import '../../domain/usecases/get_current_user_usecase.dart';
+import '../../domain/usecases/logout_usecase.dart';
+import '../../data/repositories/auth_repository_impl.dart';
+import '../../data/datasources/local_data_source.dart';
+import '../calculators/house_loan_calculator.dart';
+import '../calculators/car_loan_calculator.dart';
+import '../calculators/personal_loan_calculator.dart';
+import '../calculators/other_loan_calculator.dart';
+import '../profile/profile_screen.dart';
+import '../auth/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -90,7 +90,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'ค่าดำเนินชีวิต',
+                          'คำนวณเงินกู้',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,

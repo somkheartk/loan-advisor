@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import '../domain/entities/loan_calculation.dart';
-import '../domain/usecases/calculate_loan_usecase.dart';
+import 'dart:math' as math;
 
-class HouseLoanCalculator extends StatefulWidget {
-  const HouseLoanCalculator({super.key});
+class PersonalLoanCalculator extends StatefulWidget {
+  const PersonalLoanCalculator({super.key});
 
   @override
-  State<HouseLoanCalculator> createState() => _HouseLoanCalculatorState();
+  State<PersonalLoanCalculator> createState() => _PersonalLoanCalculatorState();
 }
 
-class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
+class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
   final _formKey = GlobalKey<FormState>();
   final _loanAmountController = TextEditingController();
   final _interestRateController = TextEditingController();
   final _loanTermController = TextEditingController();
-  final _numberFormat = NumberFormat('#,##0.00', 'en_US');
-  final _calculateLoanUseCase = CalculateLoanUseCase();
 
   double _monthlyPayment = 0;
   double _totalPayment = 0;
@@ -32,26 +29,25 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
   }
 
   void _calculate() {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState!.validate()) {
+      final loanAmount =
+          double.parse(_loanAmountController.text.replaceAll(',', ''));
+      final interestRate = double.parse(_interestRateController.text);
+      final loanTermYears = int.parse(_loanTermController.text);
 
-    final loanAmount =
-        double.parse(_loanAmountController.text.replaceAll(',', ''));
-    final annualRate = double.parse(_interestRateController.text);
-    final years = int.parse(_loanTermController.text);
+      setState(() {
+        final monthlyInterestRate = interestRate / 100 / 12;
+        final numberOfPayments = loanTermYears * 12;
 
-    final calculation = LoanCalculation(
-      principalAmount: loanAmount,
-      annualInterestRate: annualRate,
-      termInMonths: years * 12,
-    );
+        _monthlyPayment = loanAmount *
+            (monthlyInterestRate *
+                math.pow(1 + monthlyInterestRate, numberOfPayments)) /
+            (math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
 
-    final result = _calculateLoanUseCase.execute(calculation);
-
-    setState(() {
-      _monthlyPayment = result.monthlyPayment;
-      _totalPayment = result.totalPayment;
-      _totalInterest = result.totalInterest;
-    });
+        _totalPayment = _monthlyPayment * numberOfPayments;
+        _totalInterest = _totalPayment - loanAmount;
+      });
+    }
   }
 
   @override
@@ -82,14 +78,27 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
                         color: Colors.white,
                         size: 24,
                       ),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        // กลับไปหน้าหลักแทนการ pop
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        } else {
+                          // ถ้าไม่สามารถ pop ได้ ให้แจ้งว่าอยู่หน้าหลักแล้ว
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('อยู่ในหน้าหลักแล้ว'),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(width: 8),
                     const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'คำนวณสินเชื่อบ้าน',
+                          'คำนวณสินเชื่อบุคคล',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -97,7 +106,7 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
                           ),
                         ),
                         Text(
-                          'คำนวณยอดผ่อนรายเดือน',
+                          'คำนวณยอดผ่อนสินเชื่อส่วนบุคคล',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 12,
@@ -127,20 +136,20 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Loan Icon and Title
+                          // Personal Loan Icon and Title
                           Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color:
-                                      const Color(0xFF4285F4).withOpacity(0.1),
+                                      const Color(0xFFFF9800).withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
-                                  Icons.home,
+                                  Icons.person,
                                   size: 24,
-                                  color: Color(0xFF4285F4),
+                                  color: Color(0xFFFF9800),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -148,7 +157,7 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'สินเชื่อบ้าน',
+                                    'สินเชื่อบุคคล',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -156,7 +165,7 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
                                     ),
                                   ),
                                   Text(
-                                    'คำนวณการผ่อนซื้อบ้าน',
+                                    'คำนวณการกู้ยืมเงินส่วนบุคคล',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
@@ -171,18 +180,18 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
 
                           // Loan Amount Input
                           _buildInputSection(
-                            title: 'ยอดเงินกู้',
+                            title: 'จำนวนเงินกู้',
                             controller: _loanAmountController,
                             hintText: 'ระบุจำนวนเงินที่ต้องการกู้',
                             suffixText: 'บาท',
-                            icon: Icons.attach_money,
+                            icon: Icons.account_balance_wallet,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'กรุณากรอกยอดเงินกู้';
+                                return 'กรุณากรอกจำนวนเงินกู้';
                               }
                               return null;
                             },
@@ -236,7 +245,7 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
                             child: ElevatedButton(
                               onPressed: _calculate,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF4285F4),
+                                backgroundColor: const Color(0xFFFF9800),
                                 foregroundColor: Colors.white,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
@@ -281,7 +290,7 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
     required String hintText,
     required String suffixText,
     required IconData icon,
-    required TextInputType keyboardType,
+    TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
@@ -291,35 +300,36 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
         Text(
           title,
           style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
             color: Color(0xFF333333),
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          validator: validator,
-          decoration: InputDecoration(
-            hintText: hintText,
-            suffixText: suffixText,
-            prefixIcon: Icon(icon, color: const Color(0xFF4285F4)),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+            color: Colors.grey.shade50,
+          ),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            validator: validator,
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(color: Colors.grey.shade500),
+              prefixIcon: Icon(icon, color: const Color(0xFFFF9800)),
+              suffixText: suffixText,
+              suffixStyle: const TextStyle(
+                color: Color(0xFF666666),
+                fontWeight: FontWeight.w500,
+              ),
+              border: InputBorder.none,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF4285F4)),
-            ),
-            filled: true,
-            fillColor: Colors.grey.shade50,
           ),
         ),
       ],
@@ -334,12 +344,14 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
+            const Color(0xFFFF9800).withOpacity(0.1),
             const Color(0xFF4285F4).withOpacity(0.1),
-            const Color(0xFF8E24AA).withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF4285F4).withOpacity(0.2)),
+        border: Border.all(
+          color: const Color(0xFFFF9800).withOpacity(0.3),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,20 +361,20 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4285F4).withOpacity(0.1),
-                  shape: BoxShape.circle,
+                  color: const Color(0xFFFF9800),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.calculate,
-                  size: 20,
-                  color: Color(0xFF4285F4),
+                  size: 16,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(width: 12),
               const Text(
                 'ผลการคำนวณ',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF333333),
                 ),
@@ -370,68 +382,66 @@ class _HouseLoanCalculatorState extends State<HouseLoanCalculator> {
             ],
           ),
           const SizedBox(height: 16),
-          _buildResultRow(
+          _buildResultItem(
             'ยอดผ่อนต่อเดือน',
-            '฿${_numberFormat.format(_monthlyPayment)}',
-            const Color(0xFF4285F4),
-            isBold: true,
+            '฿${NumberFormat('#,##0.00', 'en_US').format(_monthlyPayment)}',
+            Icons.payment,
+            const Color(0xFFFF9800),
             isHighlight: true,
           ),
-          const SizedBox(height: 12),
-          _buildResultRow(
+          const Divider(height: 24, color: Color(0xFFE0E0E0)),
+          _buildResultItem(
             'ยอดชำระรวมทั้งหมด',
-            '฿${_numberFormat.format(_totalPayment)}',
-            const Color(0xFF333333),
+            '฿${NumberFormat('#,##0.00', 'en_US').format(_totalPayment)}',
+            Icons.account_balance_wallet,
+            const Color(0xFF666666),
           ),
-          const SizedBox(height: 12),
-          _buildResultRow(
+          const Divider(height: 24, color: Color(0xFFE0E0E0)),
+          _buildResultItem(
             'ดอกเบี้ยรวม',
-            '฿${_numberFormat.format(_totalInterest)}',
-            Colors.orange,
+            '฿${NumberFormat('#,##0.00', 'en_US').format(_totalInterest)}',
+            Icons.trending_up,
+            const Color(0xFFEA4335),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildResultRow(String label, String value, Color color,
-      {bool isBold = false, bool isHighlight = false}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: isHighlight
-          ? BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+  Widget _buildResultItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color, {
+    bool isHighlight = false,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: color),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF666666),
                 ),
-              ],
-            )
-          : null,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isBold ? 16 : 14,
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: const Color(0xFF333333),
-            ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: isHighlight ? 18 : 16,
+                  fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ],
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isBold ? 18 : 16,
-              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

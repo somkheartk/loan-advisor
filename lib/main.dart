@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'data/datasources/local_data_source.dart';
-import 'screens/login_screen.dart';
-import 'screens/main_navigation.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/main/main_navigation.dart';
 
 void main() {
   runApp(const LoanAdvisorApp());

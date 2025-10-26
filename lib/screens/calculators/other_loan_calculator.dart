@@ -89,7 +89,20 @@ class _OtherLoanCalculatorState extends State<OtherLoanCalculator> {
                         color: Colors.white,
                         size: 24,
                       ),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        // กลับไปหน้าหลักแทนการ pop
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        } else {
+                          // ถ้าไม่สามารถ pop ได้ ให้แจ้งว่าอยู่หน้าหลักแล้ว
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('อยู่ในหน้าหลักแล้ว'),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(width: 8),
                     const Column(

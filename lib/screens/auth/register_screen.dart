@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../domain/usecases/register_usecase.dart';
-import '../domain/usecases/login_usecase.dart';
-import '../data/repositories/auth_repository_impl.dart';
-import '../data/datasources/local_data_source.dart';
-import 'home_screen.dart';
+import '../../domain/usecases/register_usecase.dart';
+import '../../domain/usecases/login_usecase.dart';
+import '../../data/repositories/auth_repository_impl.dart';
+import '../../data/datasources/local_data_source.dart';
+import '../main/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
