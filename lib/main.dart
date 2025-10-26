@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'data/datasources/local_data_source.dart';
 import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_navigation.dart';
 
 void main() {
   runApp(const LoanAdvisorApp());
@@ -60,6 +60,6 @@ class _AuthCheckState extends State<AuthCheck> {
       );
     }
 
-    return _isLoggedIn! ? const HomeScreen() : const LoginScreen();
+    return _isLoggedIn! ? const MainNavigation() : const LoginScreen();
   }
 }

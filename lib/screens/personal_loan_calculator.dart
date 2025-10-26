@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import '../domain/entities/loan_calculation.dart';
-import '../domain/usecases/calculate_loan_usecase.dart';
+import 'dart:math' as math;
 
 class PersonalLoanCalculator extends StatefulWidget {
   const PersonalLoanCalculator({super.key});
@@ -16,8 +15,6 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
   final _loanAmountController = TextEditingController();
   final _interestRateController = TextEditingController();
   final _loanTermController = TextEditingController();
-  final _numberFormat = NumberFormat('#,##0.00', 'en_US');
-  final _calculateLoanUseCase = CalculateLoanUseCase();
 
   double _monthlyPayment = 0;
   double _totalPayment = 0;
@@ -32,194 +29,403 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
   }
 
   void _calculate() {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState!.validate()) {
+      final loanAmount =
+          double.parse(_loanAmountController.text.replaceAll(',', ''));
+      final interestRate = double.parse(_interestRateController.text);
+      final loanTermYears = int.parse(_loanTermController.text);
 
-    final loanAmount = double.parse(_loanAmountController.text.replaceAll(',', ''));
-    final annualRate = double.parse(_interestRateController.text);
-    final months = int.parse(_loanTermController.text);
+      setState(() {
+        final monthlyInterestRate = interestRate / 100 / 12;
+        final numberOfPayments = loanTermYears * 12;
 
-    final calculation = LoanCalculation(
-      principalAmount: loanAmount,
-      annualInterestRate: annualRate,
-      termInMonths: months,
-    );
+        _monthlyPayment = loanAmount *
+            (monthlyInterestRate *
+                math.pow(1 + monthlyInterestRate, numberOfPayments)) /
+            (math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
 
-    final result = _calculateLoanUseCase.execute(calculation);
-
-    setState(() {
-      _monthlyPayment = result.monthlyPayment;
-      _totalPayment = result.totalPayment;
-      _totalInterest = result.totalInterest;
-    });
+        _totalPayment = _monthlyPayment * numberOfPayments;
+        _totalInterest = _totalPayment - loanAmount;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('คำนวณดอกเบี้ยส่วนบุคคล'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF4285F4), // Google Blue
+              Color(0xFF8E24AA), // Purple
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    const SizedBox(width: 8),
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'ข้อมูลสินเชื่อส่วนบุคคล',
+                        Text(
+                          'คำนวณสินเชื่อบุคคล',
                           style: TextStyle(
-                            fontSize: 20,
+                            color: Colors.white,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _loanAmountController,
-                          decoration: const InputDecoration(
-                            labelText: 'ยอดกู้ (บาท)',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.monetization_on),
-                          ),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'กรุณากรอกยอดกู้';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _interestRateController,
-                          decoration: const InputDecoration(
-                            labelText: 'อัตราดอกเบี้ยต่อปี (%)',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.percent),
-                          ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'กรุณากรอกอัตราดอกเบี้ย';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _loanTermController,
-                          decoration: const InputDecoration(
-                            labelText: 'ระยะเวลากู้ (เดือน)',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.calendar_today),
-                          ),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'กรุณากรอกระยะเวลากู้';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: _calculate,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text(
-                            'คำนวณ',
-                            style: TextStyle(fontSize: 16),
+                        Text(
+                          'คำนวณยอดผ่อนสินเชื่อส่วนบุคคล',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
                           ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-                if (_monthlyPayment > 0) ...[
-                  const SizedBox(height: 16),
-                  Card(
-                    color: Colors.orange.shade50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+              ),
+
+              // Main Content
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'ผลการคำนวณ',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          // Personal Loan Icon and Title
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color(0xFFFF9800).withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 24,
+                                  color: Color(0xFFFF9800),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'สินเชื่อบุคคล',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF333333),
+                                    ),
+                                  ),
+                                  Text(
+                                    'คำนวณการกู้ยืมเงินส่วนบุคคล',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Loan Amount Input
+                          _buildInputSection(
+                            title: 'จำนวนเงินกู้',
+                            controller: _loanAmountController,
+                            hintText: 'ระบุจำนวนเงินที่ต้องการกู้',
+                            suffixText: 'บาท',
+                            icon: Icons.account_balance_wallet,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'กรุณากรอกจำนวนเงินกู้';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Interest Rate Input
+                          _buildInputSection(
+                            title: 'อัตราดอกเบี้ย',
+                            controller: _interestRateController,
+                            hintText: 'ระบุอัตราดอกเบี้ยต่อปี',
+                            suffixText: '%',
+                            icon: Icons.percent,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'กรุณากรอกอัตราดอกเบี้ย';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Loan Term Input
+                          _buildInputSection(
+                            title: 'ระยะเวลาผ่อน',
+                            controller: _loanTermController,
+                            hintText: 'ระบุจำนวนปีที่ผ่อน',
+                            suffixText: 'ปี',
+                            icon: Icons.schedule,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'กรุณากรอกระยะเวลาผ่อน';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // Calculate Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _calculate,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF9800),
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 2,
+                              ),
+                              child: const Text(
+                                'คำนวณยอดผ่อน',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
-                          const Divider(height: 24),
-                          _buildResultRow(
-                            'ยอดผ่อนต่อเดือน',
-                            '฿${_numberFormat.format(_monthlyPayment)}',
-                            Colors.orange,
-                            isBold: true,
-                          ),
-                          const SizedBox(height: 12),
-                          _buildResultRow(
-                            'ยอดชำระรวมทั้งหมด',
-                            '฿${_numberFormat.format(_totalPayment)}',
-                            Colors.black87,
-                          ),
-                          const SizedBox(height: 12),
-                          _buildResultRow(
-                            'ดอกเบี้ยรวม',
-                            '฿${_numberFormat.format(_totalInterest)}',
-                            Colors.red,
-                          ),
-                          const SizedBox(height: 12),
-                          _buildResultRow(
-                            'อัตราดอกเบี้ยที่แท้จริง',
-                            '${(_totalInterest / double.parse(_loanAmountController.text.replaceAll(',', '')) * 100).toStringAsFixed(2)}%',
-                            Colors.red.shade700,
-                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Results Section
+                          if (_monthlyPayment > 0) _buildResultsSection(),
+
+                          const SizedBox(
+                              height: 100), // Bottom padding for navigation
                         ],
                       ),
                     ),
                   ),
-                ],
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildResultRow(String label, String value, Color color, {bool isBold = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildInputSection({
+    required String title,
+    required TextEditingController controller,
+    required String hintText,
+    required String suffixText,
+    required IconData icon,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF333333),
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: isBold ? 20 : 16,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-            color: color,
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+            color: Colors.grey.shade50,
+          ),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            validator: validator,
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(color: Colors.grey.shade500),
+              prefixIcon: Icon(icon, color: const Color(0xFFFF9800)),
+              suffixText: suffixText,
+              suffixStyle: const TextStyle(
+                color: Color(0xFF666666),
+                fontWeight: FontWeight.w500,
+              ),
+              border: InputBorder.none,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultsSection() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFFF9800).withOpacity(0.1),
+            const Color(0xFF4285F4).withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFFF9800).withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF9800),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.calculate,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'ผลการคำนวณ',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF333333),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildResultItem(
+            'ยอดผ่อนต่อเดือน',
+            '฿${NumberFormat('#,##0.00', 'en_US').format(_monthlyPayment)}',
+            Icons.payment,
+            const Color(0xFFFF9800),
+            isHighlight: true,
+          ),
+          const Divider(height: 24, color: Color(0xFFE0E0E0)),
+          _buildResultItem(
+            'ยอดชำระรวมทั้งหมด',
+            '฿${NumberFormat('#,##0.00', 'en_US').format(_totalPayment)}',
+            Icons.account_balance_wallet,
+            const Color(0xFF666666),
+          ),
+          const Divider(height: 24, color: Color(0xFFE0E0E0)),
+          _buildResultItem(
+            'ดอกเบี้ยรวม',
+            '฿${NumberFormat('#,##0.00', 'en_US').format(_totalInterest)}',
+            Icons.trending_up,
+            const Color(0xFFEA4335),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color, {
+    bool isHighlight = false,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: color),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF666666),
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: isHighlight ? 18 : 16,
+                  fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ],
           ),
         ),
       ],
