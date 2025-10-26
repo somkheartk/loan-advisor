@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/user_service.dart';
+import '../domain/usecases/login_usecase.dart';
+import '../data/repositories/auth_repository_impl.dart';
+import '../data/datasources/local_data_source.dart';
 import 'register_screen.dart';
 import 'home_screen.dart';
 
@@ -14,8 +16,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _userService = UserService();
+  late final LoginUseCase _loginUseCase;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final dataSource = LocalDataSource();
+    final repository = AuthRepositoryImpl(dataSource);
+    _loginUseCase = LoginUseCase(repository);
+  }
 
   @override
   void dispose() {
@@ -29,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    final success = await _userService.login(
+    final success = await _loginUseCase.execute(
       _emailController.text.trim(),
       _passwordController.text,
     );

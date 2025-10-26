@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'data/datasources/local_data_source.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 
@@ -33,16 +33,17 @@ class AuthCheck extends StatefulWidget {
 
 class _AuthCheckState extends State<AuthCheck> {
   bool? _isLoggedIn;
+  late final LocalDataSource _dataSource;
 
   @override
   void initState() {
     super.initState();
+    _dataSource = LocalDataSource();
     _checkLoginStatus();
   }
 
   Future<void> _checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    final isLoggedIn = await _dataSource.isLoggedIn();
     setState(() {
       _isLoggedIn = isLoggedIn;
     });

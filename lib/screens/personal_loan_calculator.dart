@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'dart:math';
+import '../domain/entities/loan_calculation.dart';
+import '../domain/usecases/calculate_loan_usecase.dart';
 
 class PersonalLoanCalculator extends StatefulWidget {
   const PersonalLoanCalculator({super.key});
@@ -16,6 +17,7 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
   final _interestRateController = TextEditingController();
   final _loanTermController = TextEditingController();
   final _numberFormat = NumberFormat('#,##0.00', 'en_US');
+  final _calculateLoanUseCase = CalculateLoanUseCase();
 
   double _monthlyPayment = 0;
   double _totalPayment = 0;
@@ -36,20 +38,18 @@ class _PersonalLoanCalculatorState extends State<PersonalLoanCalculator> {
     final annualRate = double.parse(_interestRateController.text);
     final months = int.parse(_loanTermController.text);
 
-    final monthlyRate = annualRate / 100 / 12;
+    final calculation = LoanCalculation(
+      principalAmount: loanAmount,
+      annualInterestRate: annualRate,
+      termInMonths: months,
+    );
 
-    // Calculate monthly payment using the formula
-    final monthlyPayment = loanAmount *
-        (monthlyRate * pow(1 + monthlyRate, months)) /
-        (pow(1 + monthlyRate, months) - 1);
-
-    final totalPayment = monthlyPayment * months;
-    final totalInterest = totalPayment - loanAmount;
+    final result = _calculateLoanUseCase.execute(calculation);
 
     setState(() {
-      _monthlyPayment = monthlyPayment;
-      _totalPayment = totalPayment;
-      _totalInterest = totalInterest;
+      _monthlyPayment = result.monthlyPayment;
+      _totalPayment = result.totalPayment;
+      _totalInterest = result.totalInterest;
     });
   }
 

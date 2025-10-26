@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/user_service.dart';
+import '../domain/usecases/register_usecase.dart';
+import '../domain/usecases/login_usecase.dart';
+import '../data/repositories/auth_repository_impl.dart';
+import '../data/datasources/local_data_source.dart';
 import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -15,8 +18,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _userService = UserService();
+  late final RegisterUseCase _registerUseCase;
+  late final LoginUseCase _loginUseCase;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final dataSource = LocalDataSource();
+    final repository = AuthRepositoryImpl(dataSource);
+    _registerUseCase = RegisterUseCase(repository);
+    _loginUseCase = LoginUseCase(repository);
+  }
 
   @override
   void dispose() {
@@ -32,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     setState(() => _isLoading = true);
 
-    final success = await _userService.register(
+    final success = await _registerUseCase.execute(
       _emailController.text.trim(),
       _passwordController.text,
       _nameController.text.trim(),
@@ -44,7 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (success) {
       // Auto login after registration
-      await _userService.login(
+      await _loginUseCase.execute(
         _emailController.text.trim(),
         _passwordController.text,
       );
