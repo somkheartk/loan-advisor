@@ -1,0 +1,71 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="#4285F4" stroke="#ffffff" stroke-width="8"/>
+  
+  <!-- Calculator Icon -->
+  <rect x="156" y="120" width="200" height="260" rx="20" fill="#ffffff"/>
+  <rect x="170" y="140" width="172" height="60" rx="8" fill="#f0f0f0"/>
+  
+  <!-- Display -->
+  <text x="252" y="180" text-anchor="middle" fill="#4285F4" font-family="Arial, sans-serif" font-size="24" font-weight="bold">$125,500</text>
+  
+  <!-- Calculator Buttons -->
+  <g fill="#e8e8e8" stroke="#ddd" stroke-width="1">
+    <!-- Row 1 -->
+    <rect x="180" y="220" width="30" height="25" rx="4"/>
+    <rect x="220" y="220" width="30" height="25" rx="4"/>
+    <rect x="260" y="220" width="30" height="25" rx="4"/>
+    <rect x="300" y="220" width="30" height="25" rx="4"/>
+    
+    <!-- Row 2 -->
+    <rect x="180" y="255" width="30" height="25" rx="4"/>
+    <rect x="220" y="255" width="30" height="25" rx="4"/>
+    <rect x="260" y="255" width="30" height="25" rx="4"/>
+    <rect x="300" y="255" width="30" height="25" rx="4"/>
+    
+    <!-- Row 3 -->
+    <rect x="180" y="290" width="30" height="25" rx="4"/>
+    <rect x="220" y="290" width="30" height="25" rx="4"/>
+    <rect x="260" y="290" width="30" height="25" rx="4"/>
+    <rect x="300" y="290" width="30" height="25" rx="4"/>
+    
+    <!-- Row 4 -->
+    <rect x="180" y="325" width="70" height="25" rx="4"/>
+    <rect x="260" y="325" width="30" height="25" rx="4"/>
+    <rect x="300" y="325" width="30" height="25" rx="4"/>
+  </g>
+  
+  <!-- Button Labels -->
+  <g fill="#666" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">
+    <!-- Row 1 -->
+    <text x="195" y="236">7</text>
+    <text x="235" y="236">8</text>
+    <text x="275" y="236">9</text>
+    <text x="315" y="236">÷</text>
+    
+    <!-- Row 2 -->
+    <text x="195" y="271">4</text>
+    <text x="235" y="271">5</text>
+    <text x="275" y="271">6</text>
+    <text x="315" y="271">×</text>
+    
+    <!-- Row 3 -->
+    <text x="195" y="306">1</text>
+    <text x="235" y="306">2</text>
+    <text x="275" y="306">3</text>
+    <text x="315" y="306">-</text>
+    
+    <!-- Row 4 -->
+    <text x="215" y="341">0</text>
+    <text x="275" y="341">.</text>
+    <text x="315" y="341">=</text>
+  </g>
+  
+  <!-- Dollar Sign overlay -->
+  <circle cx="370" cy="160" r="35" fill="#34A853"/>
+  <text x="370" y="172" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="32" font-weight="bold">$</text>
+  
+  <!-- App Name -->
+  <text x="256" y="420" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="bold">LOAN</text>
+  <text x="256" y="440" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="bold">ADVISOR</text>
+</svg>
