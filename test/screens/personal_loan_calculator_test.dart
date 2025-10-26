@@ -7,6 +7,9 @@ void main() {
   group('PersonalLoanCalculator Tests', () {
     testWidgets('Should render personal loan calculator with all elements',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange & Act
       await tester.pumpWidget(
           TestHelpers.createTestApp(const PersonalLoanCalculator()));
@@ -24,10 +27,16 @@ void main() {
       expect(find.byIcon(Icons.account_balance_wallet), findsWidgets);
       expect(find.byIcon(Icons.percent), findsWidgets);
       expect(find.byIcon(Icons.schedule), findsWidgets);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should have proper gradient background',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange & Act
       await tester.pumpWidget(
           TestHelpers.createTestApp(const PersonalLoanCalculator()));
@@ -52,10 +61,16 @@ void main() {
         }
       }
       expect(hasGradient, isTrue);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should show validation errors for empty fields',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange
       await tester.pumpWidget(
           TestHelpers.createTestApp(const PersonalLoanCalculator()));
@@ -69,17 +84,23 @@ void main() {
             (widget.child as Text).data == 'คำนวณยอดผ่อน',
       );
 
-      await tester.tap(calculateButton);
+      await tester.tap(calculateButton, warnIfMissed: false);
       await tester.pump();
 
       // Assert - Check validation messages
       expect(find.text('กรุณากรอกจำนวนเงินกู้'), findsOneWidget);
       expect(find.text('กรุณากรอกอัตราดอกเบี้ย'), findsOneWidget);
       expect(find.text('กรุณากรอกระยะเวลาผ่อน'), findsOneWidget);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should calculate monthly payment correctly',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange
       await tester.pumpWidget(
           TestHelpers.createTestApp(const PersonalLoanCalculator()));
@@ -103,7 +124,7 @@ void main() {
             (widget.child as Text).data == 'คำนวณยอดผ่อน',
       );
 
-      await tester.tap(calculateButton);
+      await tester.tap(calculateButton, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Assert - Should show results section
@@ -114,10 +135,16 @@ void main() {
 
       // Check that calculated values are displayed (should contain ฿ symbol)
       expect(find.textContaining('฿'), findsWidgets);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should navigate back when back button is pressed',
         (WidgetTester tester) async {
+      // Configure test environment
+      TestHelpers.configureTestEnvironment(tester);
+
       // Arrange
       await tester.pumpWidget(
           TestHelpers.createTestApp(const PersonalLoanCalculator()));
@@ -130,6 +157,9 @@ void main() {
 
       // Assert - Should navigate back (in real app this would pop the route)
       expect(backButton, findsOneWidget);
+
+      // Reset test environment
+      TestHelpers.resetTestEnvironment(tester);
     });
 
     testWidgets('Should show personal loan icon and orange color scheme',
