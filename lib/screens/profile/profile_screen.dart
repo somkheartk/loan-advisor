@@ -18,6 +18,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _userName = '';
   String _userEmail = '';
 
+  // Hardcode version info from pubspec.yaml
+  final String _appVersion = '1.0.1';
+  final String _buildNumber = '2';
+
   @override
   void initState() {
     super.initState();
@@ -261,7 +265,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _buildInfoTile(
                                 icon: Icons.apps,
                                 title: 'เวอร์ชันแอป',
-                                subtitle: '1.0.0',
+                                subtitle: _appVersion.isNotEmpty
+                                    ? '$_appVersion (Build $_buildNumber)'
+                                    : 'กำลังโหลด...',
                                 onTap: null,
                               ),
                               _buildInfoTile(
@@ -526,32 +532,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text('Loan Advisor'),
           ],
         ),
-        content: const SingleChildScrollView(
+        content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'Loan Advisor เป็นแอปพลิเคชันที่ช่วยให้คุณคำนวณสินเชื่อประเภทต่างๆ อย่างง่ายดาย',
                 style: TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'ฟีเจอร์หลัก:',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
-              Text('• คำนวณสินเชื่อบ้าน'),
-              Text('• คำนวณสินเชื่อรถยนต์'),
-              Text('• คำนวณสินเชื่อส่วนบุคคล'),
-              Text('• คำนวณสินเชื่อประเภทอื่นๆ'),
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 8),
+              const Text('• คำนวณสินเชื่อบ้าน'),
+              const Text('• คำนวณสินเชื่อรถยนต์'),
+              const Text('• คำนวณสินเชื่อส่วนบุคคล'),
+              const Text('• คำนวณสินเชื่อประเภทอื่นๆ'),
+              const SizedBox(height: 16),
+              const Text(
                 'ช่วยให้คุณวางแผนการเงินและเตรียมตัวก่อนทำสินเชื่อจริง',
                 style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'ข้อมูลแอปพลิเคชัน:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'เวอร์ชัน: ${_appVersion.isNotEmpty ? _appVersion : "กำลังโหลด..."}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    Text(
+                      'Build: ${_buildNumber.isNotEmpty ? _buildNumber : "กำลังโหลด..."}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    const Text(
+                      'พัฒนาโดย: Flutter Development Team',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

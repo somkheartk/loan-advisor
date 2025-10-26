@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'home_screen.dart';
 import '../profile/profile_screen.dart';
-import '../calculators/house_loan_calculator.dart';
+import '../calculators/calculator_main_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -12,18 +13,55 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
+  late PageController _pageController;
 
   final List<Widget> _screens = [
     const HomeScreenContent(),
-    const HouseLoanCalculator(),
+    const CalculatorMainScreen(),
     const ProfileScreen(),
     const SettingsScreen(),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onTabTapped(int index) {
+    if (_currentIndex != index) {
+      setState(() {
+        _currentIndex = index;
+      });
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+
+      // Haptic feedback for better UX
+      HapticFeedback.lightImpact();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: _screens,
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -31,44 +69,80 @@ class _MainNavigationState extends State<MainNavigation> {
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
               spreadRadius: 1,
-              blurRadius: 5,
+              blurRadius: 10,
               offset: const Offset(0, -3),
             ),
           ],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
         ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: const Color(0xFF4285F4),
-          unselectedItemColor: Colors.grey,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          iconSize: 20, // ทำให้ icon เล็กลง
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'หน้าหลัก',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calculate),
-              label: 'คำนวณ',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'โปรไฟล์',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'ตั้งค่า',
-            ),
-          ],
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: _onTabTapped,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
+            selectedItemColor: const Color(0xFF4285F4),
+            unselectedItemColor: Colors.grey.shade500,
+            selectedFontSize: 12,
+            unselectedFontSize: 10,
+            iconSize: 28,
+            elevation: 0,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.home_rounded, 0),
+                activeIcon: _buildActiveNavIcon(Icons.home_rounded, 0),
+                label: 'หน้าหลัก',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.calculate_rounded, 1),
+                activeIcon: _buildActiveNavIcon(Icons.calculate_rounded, 1),
+                label: 'คำนวณ',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.person_rounded, 2),
+                activeIcon: _buildActiveNavIcon(Icons.person_rounded, 2),
+                label: 'โปรไฟล์',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildNavIcon(Icons.settings_rounded, 3),
+                activeIcon: _buildActiveNavIcon(Icons.settings_rounded, 3),
+                label: 'ตั้งค่า',
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNavIcon(IconData icon, int index) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: Icon(
+        icon,
+        size: 24,
+      ),
+    );
+  }
+
+  Widget _buildActiveNavIcon(IconData icon, int index) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF4285F4).withOpacity(0.15),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Icon(
+        icon,
+        size: 24,
+        color: const Color(0xFF4285F4),
       ),
     );
   }
