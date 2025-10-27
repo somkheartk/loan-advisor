@@ -161,7 +161,7 @@ const String apiBaseUrl = 'https://your-app-url.ondigitalocean.app';
 - ตรวจสอบการตั้งค่า Network Access (IP เฉพาะหรือ 0.0.0.0/0)
 - ตรวจสอบข้อมูล Database User
 - ตรวจสอบรูปแบบ Connection String
-- ตรวจสอบว่าชื่อ Database ใน Connection String ถูกต้อง
+- ตรวจสอบว่าชื่อ Database ใน Connection String ถูกต้อง (ควรเป็น `loan-advisor` ตามตัวอย่าง)
 
 ### API ไม่ตอบสนอง
 

@@ -161,7 +161,7 @@ As your app grows, you can easily upgrade:
 - Verify network access is configured (either specific IPs or 0.0.0.0/0)
 - Check database user credentials
 - Verify connection string format
-- Ensure the database name is correct in the connection string
+- Ensure the database name is correct in the connection string (should be `loan-advisor` as shown in the example)
 
 ### API Not Responding
 

@@ -25,7 +25,7 @@ This directory contains all the configuration files needed for one-click deploym
 
 ## Quick Deploy
 
-Click here to deploy: [Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=https://github.com/somkheartk/loan-advisor)
+Click here to deploy: [Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=https://github.com/somkheartk/loan-advisor/tree/main)
 
 ## Configuration Details
 
