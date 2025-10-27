@@ -63,6 +63,10 @@ lib/
 │   └── repositories/         # Repository Implementations
 │       └── auth_repository_impl.dart
 │
+├── widgets/                  # Custom Widgets (Reusable Components)
+│   ├── app_icons.dart        # ไอคอนหลักและไอคอนประเภทสินเชื่อ
+│   └── README.md             # เอกสารการใช้งาน widgets ภาษาไทย
+│
 └── screens/                  # Presentation Layer (UI)
     ├── auth/                 # Authentication Screens
     │   ├── login_screen.dart
