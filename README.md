@@ -104,6 +104,29 @@ lib/
 - `shared_preferences`: ^2.2.2 - สำหรับจัดเก็บข้อมูลในเครื่อง
 - `intl`: ^0.18.1 - สำหรับจัดรูปแบบตัวเลขและวันที่
 
+## 📚 เอกสารสำหรับนักพัฒนา
+
+- **[LAYOUT_GUIDE.md](LAYOUT_GUIDE.md)** - 📐 คู่มือการวาง Layout และการเลือก Component/Widget
+  - โครงสร้าง Layout พื้นฐาน
+  - การเลือกใช้ Widget ที่เหมาะสม
+  - รูปแบบ Layout ในแอป
+  - ตัวอย่างการวาง Layout แบบละเอียด
+  - Best Practices สำหรับ Flutter UI
+  
+- **[lib/widgets/README.md](lib/widgets/README.md)** - 🎨 คู่มือการใช้งาน Custom Widgets
+  - AppIcon, LoanTypeIcon, CalculatorIcon
+  - Properties และการใช้งาน
+  - ตัวอย่าง Code
+  
+- **[CLEAN_ARCHITECTURE.md](CLEAN_ARCHITECTURE.md)** - 🏛️ Clean Architecture
+  - Domain, Data, Presentation Layers
+  - Use Cases และ Repository Pattern
+  - Dependency Flow
+  
+- **[FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md)** - 📁 โครงสร้างไฟล์
+- **[DESIGN.md](DESIGN.md)** - 🎨 Visual Design Guide
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - 🏗️ App Architecture Overview
+
 ## License
 
 This project is licensed under the MIT License.
