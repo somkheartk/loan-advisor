@@ -74,8 +74,14 @@ npm run start:dev
 ### Option 2: Using Docker Compose (Production-like)
 ```bash
 cd backend
+# Make sure .env file is configured with your JWT_SECRET
 docker-compose up -d
 ```
+
+**⚠️ Security Note:** Before deploying to production, ensure you:
+1. Create a `.env` file with a strong `JWT_SECRET`
+2. Never commit `.env` to version control
+3. Use environment variables or secrets management for production
 
 This will start both MongoDB and the backend API.
 
@@ -237,11 +243,39 @@ backend/
 
 ## Security Features
 
-- **Password Hashing**: All passwords are hashed using bcrypt with salt rounds
-- **JWT Tokens**: Secure token-based authentication
+- **Password Hashing**: All passwords are hashed using bcrypt with 10 salt rounds
+- **JWT Tokens**: Secure token-based authentication with 7-day expiration
 - **Input Validation**: All inputs are validated using class-validator
 - **CORS**: Configured for secure cross-origin requests
-- **MongoDB Security**: Connection string stored in environment variables
+- **Environment Variables**: Sensitive data (JWT secret, MongoDB URI) stored in environment variables
+- **Protected Routes**: JWT authentication required for sensitive endpoints
+
+### Security Best Practices
+
+⚠️ **Important for Production:**
+
+1. **JWT Secret**: Generate a strong, random JWT secret:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+   ```
+   Add it to your `.env` file as `JWT_SECRET`
+
+2. **MongoDB Security**:
+   - Enable authentication on MongoDB
+   - Use strong passwords
+   - Limit network access with firewall rules
+
+3. **Environment Variables**:
+   - Never commit `.env` files to version control
+   - Use secrets management in production (AWS Secrets Manager, Azure Key Vault, etc.)
+
+4. **HTTPS**:
+   - Always use HTTPS in production
+   - Consider using a reverse proxy (nginx, Apache) with SSL certificates
+
+5. **Rate Limiting**:
+   - Consider adding rate limiting to prevent brute force attacks
+   - Use packages like `@nestjs/throttler`
 
 ## Testing with cURL
 
