@@ -57,6 +57,79 @@ sudo systemctl start mongod
 
 # Windows
 net start MongoDB
+
+# Or use Docker
+docker run -d -p 27017:27017 --name mongodb mongo:7
+```
+
+## Quick Start
+
+### Option 1: Using npm (Development)
+```bash
+cd backend
+npm install
+npm run start:dev
+```
+
+### Option 2: Using Docker Compose (Production-like)
+```bash
+cd backend
+docker-compose up -d
+```
+
+This will start both MongoDB and the backend API.
+
+The server will start on `http://localhost:3000`
+
+## Testing the API
+
+### Quick Test
+```bash
+# Health check
+curl http://localhost:3000/health
+
+# Or run the automated test script
+./test-api.sh
+```
+
+For comprehensive testing guide, see [API_TESTING.md](API_TESTING.md)
+
+## Running the Application
+
+### Development mode
+```bash
+npm run start:dev
+```
+
+### Production mode
+```bash
+npm run build
+npm run start:prod
+```
+
+### Using Docker
+```bash
+# Build and start services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Stop and remove data
+docker-compose down -v
+```
+```bash
+# macOS (using brew)
+brew services start mongodb-community
+
+# Linux
+sudo systemctl start mongod
+
+# Windows
+net start MongoDB
 ```
 
 ## Running the Application
