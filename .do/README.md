@@ -124,8 +124,12 @@ After deployment:
 ## Troubleshooting
 
 ### Component Not Detected
+If you see "No component detected" error when deploying:
 - Make sure you're deploying from the correct branch (main)
 - Verify the configuration file exists in `.do/` directory at repository root
+- The repository uses `.do/app.yaml` as the default configuration
+- The backend service is configured with `source_dir: /backend` to target the Node.js application
+- If the error persists, try importing the `.do/app-with-external-db.yaml` configuration manually
 
 ### Build Fails
 - Check that Node.js version is compatible
