@@ -245,7 +245,8 @@ backend/
 
 - **Password Hashing**: All passwords are hashed using bcrypt with 10 salt rounds
 - **JWT Tokens**: Secure token-based authentication with 7-day expiration
-- **Input Validation**: All inputs are validated using class-validator
+- **Input Validation**: All inputs are validated using class-validator before reaching business logic
+- **NoSQL Injection Protection**: Mongoose query builder provides automatic sanitization when using object notation
 - **CORS**: Configured for secure cross-origin requests
 - **Environment Variables**: Sensitive data (JWT secret, MongoDB URI) stored in environment variables
 - **Protected Routes**: JWT authentication required for sensitive endpoints

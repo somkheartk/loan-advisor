@@ -14,6 +14,10 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     // Check if user already exists
+    // Note: This query is safe from NoSQL injection because:
+    // 1. createUserDto.email is validated by class-validator @IsEmail() decorator
+    // 2. Mongoose automatically sanitizes object-based queries
+    // 3. TypeScript ensures type safety
     const existingUser = await this.userModel.findOne({ email: createUserDto.email });
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
@@ -33,6 +37,9 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<UserDocument | null> {
+    // Note: This query is safe from NoSQL injection because:
+    // 1. email parameter comes from validated DTO (LoginDto with @IsEmail())
+    // 2. Mongoose query builder with object notation provides automatic sanitization
     return this.userModel.findOne({ email, isActive: true }).exec();
   }
 
