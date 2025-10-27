@@ -28,7 +28,9 @@ Deploy Backend ของ Loan Advisor ไปยัง DigitalOcean App Platform 
    - ไปที่ [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
    - สร้างบัญชีและ Cluster ฟรี (M0 Free Tier)
    - สร้าง Database User
-   - เพิ่ม IP Range ของ DigitalOcean ใน Whitelist (หรืออนุญาตทั้งหมด: 0.0.0.0/0)
+   - ตั้งค่า Network Access:
+     - แนะนำ: เพิ่ม IP Range เฉพาะของ DigitalOcean
+     - ทางเลือก: อนุญาตทุก IP (0.0.0.0/0) สำหรับการตั้งค่าที่ง่ายขึ้น (ความปลอดภัยน้อยกว่า)
    - คัดลอก Connection String
 
 2. **Deploy ไปยัง DigitalOcean**
@@ -156,9 +158,10 @@ const String apiBaseUrl = 'https://your-app-url.ondigitalocean.app';
 ### ปัญหาการเชื่อมต่อ MongoDB
 
 **ปัญหา**: เชื่อมต่อ MongoDB Atlas ไม่ได้
-- ตรวจสอบ IP Whitelist รวม DigitalOcean (หรือ 0.0.0.0/0)
+- ตรวจสอบการตั้งค่า Network Access (IP เฉพาะหรือ 0.0.0.0/0)
 - ตรวจสอบข้อมูล Database User
 - ตรวจสอบรูปแบบ Connection String
+- ตรวจสอบว่าชื่อ Database ใน Connection String ถูกต้อง
 
 ### API ไม่ตอบสนอง
 

@@ -25,7 +25,7 @@ This directory contains all the configuration files needed for one-click deploym
 
 ## Quick Deploy
 
-Click here to deploy: [Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=https://github.com/somkheartk/loan-advisor/tree/main)
+Click here to deploy: [Deploy to DigitalOcean](https://cloud.digitalocean.com/apps/new?repo=https://github.com/somkheartk/loan-advisor)
 
 ## Configuration Details
 
@@ -101,7 +101,9 @@ doctl apps create --spec backend/.do/app-with-external-db.yaml
 Setup:
 1. Create account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 2. Create free M0 cluster
-3. Whitelist IPs (recommend 0.0.0.0/0 for simplicity)
+3. Configure network access:
+   - Option 1 (Most Secure): Add DigitalOcean's specific IP ranges
+   - Option 2 (Convenient): Whitelist 0.0.0.0/0 (allows all IPs - less secure but easier for getting started)
 4. Get connection string
 5. Set as `MONGODB_URI` in DigitalOcean
 
@@ -163,7 +165,7 @@ Upgrade options:
 
 ## Changelog
 
-- **2025-10-27**: Initial deployment configuration created
+- **Initial Release**: Deployment configuration created
   - Added `app.yaml` for managed MongoDB
   - Added `app-with-external-db.yaml` for external MongoDB
   - Created comprehensive deployment guides in English and Thai

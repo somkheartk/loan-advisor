@@ -28,7 +28,9 @@ Deploy the Loan Advisor Backend to DigitalOcean App Platform with just one click
    - Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
    - Create a free account and cluster (M0 Free Tier)
    - Create a database user
-   - Whitelist DigitalOcean IP ranges (or allow all: 0.0.0.0/0)
+   - Configure Network Access:
+     - Recommended: Add DigitalOcean's specific IP ranges
+     - Alternative: Allow all IPs (0.0.0.0/0) for easier setup (less secure)
    - Get your connection string
 
 2. **Deploy to DigitalOcean**
@@ -156,9 +158,10 @@ As your app grows, you can easily upgrade:
 ### MongoDB Connection Issues
 
 **Issue**: Cannot connect to MongoDB Atlas
-- Verify IP whitelist includes DigitalOcean (or 0.0.0.0/0)
+- Verify network access is configured (either specific IPs or 0.0.0.0/0)
 - Check database user credentials
 - Verify connection string format
+- Ensure the database name is correct in the connection string
 
 ### API Not Responding
 
