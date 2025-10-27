@@ -2,6 +2,14 @@
 
 Backend API for Loan Advisor application built with NestJS and MongoDB.
 
+## 🚀 Quick Deploy
+
+Deploy to DigitalOcean with one click - starting at **$5/month**!
+
+[![Deploy to DO](.do/deploy-button.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/somkheartk/loan-advisor/tree/main)
+
+📖 **[Complete Deployment Guide](.do/DEPLOYMENT_GUIDE.md)** - Step-by-step instructions for DigitalOcean deployment
+
 ## 📚 Documentation
 
 ### English Documentation
@@ -103,6 +111,38 @@ docker-compose up -d
 This will start both MongoDB and the backend API.
 
 The server will start on `http://localhost:3000`
+
+## 🌐 Cloud Deployment
+
+### DigitalOcean App Platform (Recommended - $5/month)
+
+Deploy your backend to DigitalOcean with a single click:
+
+1. **Quick Deploy**: Click the "Deploy to DO" button at the top of this README
+2. **Connect GitHub**: Authorize DigitalOcean to access your repository
+3. **Configure**: Set environment variables (JWT_SECRET, MONGODB_URI)
+4. **Deploy**: Launch your app in minutes!
+
+**Cost Options:**
+- **$5/month**: Basic tier + MongoDB Atlas Free Tier
+- **$20/month**: Basic tier + DigitalOcean Managed MongoDB
+
+📖 **[Full Deployment Guide](.do/DEPLOYMENT_GUIDE.md)** - Complete setup instructions
+
+### Configuration Files
+
+The repository includes ready-to-use DigitalOcean configurations:
+
+- `.do/app.yaml` - With managed MongoDB ($20/month)
+- `.do/app-with-external-db.yaml` - For external MongoDB like Atlas ($5/month)
+
+### Other Cloud Providers
+
+The backend can also be deployed to:
+- **Heroku**: Use `Dockerfile` and Heroku PostgreSQL
+- **AWS**: Deploy with ECS/Fargate + DocumentDB
+- **Google Cloud**: Use Cloud Run + MongoDB Atlas
+- **Azure**: Deploy with App Service + Cosmos DB
 
 ## Testing the API
 
