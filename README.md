@@ -4,6 +4,15 @@
 
 ---
 
+## 🚀 Deploy Backend
+
+[![Deploy to DigitalOcean](backend/.do/deploy-button.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/somkheartk/loan-advisor/tree/main)
+
+**Deploy Backend ไปยัง DigitalOcean ได้ในคลิกเดียว - เริ่มต้นเพียง $5/เดือน!**  
+📖 [คู่มือการ Deploy](DEPLOY_BACKEND.md) | [Backend Documentation](backend/README.md)
+
+---
+
 ## 📚 คู่มือสำหรับนักพัฒนา (Developer Guide)
 
 ### 🚀 เริ่มต้นอย่างรวดเร็ว (Quick Start)
