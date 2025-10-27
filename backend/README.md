@@ -2,6 +2,13 @@
 
 Backend API for Loan Advisor application built with NestJS and MongoDB.
 
+## 📚 Documentation
+
+- **English Documentation**: This file (README.md)
+- **[Thai Documentation (เอกสารภาษาไทย)](BACKEND_TH.md)**: Complete Thai documentation
+- **[Database Schema (ภาษาไทย)](DATABASE_SCHEMA_TH.md)**: Detailed database schema in Thai
+- **[API Guide (ภาษาไทย)](API_GUIDE_TH.md)**: API usage guide in Thai
+
 ## Features
 
 - **User Registration**: Register new users with email, password, and name
