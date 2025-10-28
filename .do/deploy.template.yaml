@@ -12,7 +12,7 @@ spec:
     - name: mongodb
       engine: MONGODB
       version: "7"
-      production: false
+      production: true
       cluster_name: loan-advisor-db
 
   # Backend Service - Node.js API ($5/month Basic tier)
