@@ -1,7 +1,6 @@
 #
-# DigitalOcean App Platform Configuration
-# This file enables one-click deployment to DigitalOcean
-# Starting at $5/month for the Basic tier
+# DigitalOcean App Platform Deployment Template
+# This is the template used for one-click deployment from GitHub
 #
 spec:
   name: loan-advisor-backend
@@ -19,12 +18,6 @@ spec:
   # Backend Service - Node.js API ($5/month Basic tier)
   services:
     - name: api
-      # Deployment source
-      github:
-        repo: somkheartk/loan-advisor
-        branch: main
-        deploy_on_push: true
-      
       # Build configuration
       source_dir: /backend
       build_command: npm ci && npm run build
@@ -65,7 +58,6 @@ spec:
         - key: JWT_SECRET
           scope: RUN_TIME
           type: SECRET
-          # Set this in DigitalOcean App Platform dashboard
         - key: JWT_EXPIRES_IN
           value: "7d"
       

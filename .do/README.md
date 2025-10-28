@@ -10,17 +10,23 @@ Click the button below to deploy the backend to DigitalOcean:
 
 ## Available Configurations
 
-### 1. `app.yaml` - Full Stack with Managed MongoDB
+### 1. `app.yaml` - Full Stack with Managed MongoDB (Default)
 - **Cost**: $20/month ($5 app + $15 managed MongoDB)
 - **Best for**: Production environments
 - **Includes**: Automatic MongoDB database provisioning
 - **Features**: Managed backups, monitoring, and scaling
+- **Note**: This is the default configuration used by the "Deploy to DigitalOcean" button
 
 ### 2. `app-with-external-db.yaml` - App Only
 - **Cost**: $5/month (app service only)
 - **Best for**: Development or cost-conscious deployments
 - **Database**: Use MongoDB Atlas Free Tier or your own MongoDB
 - **Setup**: Configure `MONGODB_URI` environment variable
+
+### 3. Template Files
+- `deploy.template.yaml` - Alternative template with managed MongoDB
+- `deploy-external-db.template.yaml` - Alternative template for external MongoDB
+- These can be manually imported during deployment for additional flexibility
 
 ## What Gets Deployed
 
@@ -124,8 +130,12 @@ After deployment:
 ## Troubleshooting
 
 ### Component Not Detected
+If you see "No component detected" error when deploying:
 - Make sure you're deploying from the correct branch (main)
 - Verify the configuration file exists in `.do/` directory at repository root
+- The repository uses `.do/app.yaml` as the default configuration
+- The backend service is configured with `source_dir: /backend` to target the Node.js application
+- If the error persists, try importing the `.do/app-with-external-db.yaml` configuration manually
 
 ### Build Fails
 - Check that Node.js version is compatible

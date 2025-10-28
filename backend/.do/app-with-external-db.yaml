@@ -1,5 +1,5 @@
 #
-# DigitalOcean App Platform Configuration (External MongoDB)
+# DigitalOcean App Platform Deployment Template (External MongoDB)
 # This configuration uses an external MongoDB (e.g., MongoDB Atlas Free Tier)
 # Total cost: $5/month (just the app service)
 #
@@ -10,12 +10,6 @@ spec:
   # Backend Service - Node.js API ($5/month Basic tier)
   services:
     - name: api
-      # Deployment source
-      github:
-        repo: somkheartk/loan-advisor
-        branch: main
-        deploy_on_push: true
-      
       # Build configuration
       source_dir: /backend
       build_command: npm ci && npm run build
@@ -52,12 +46,9 @@ spec:
         - key: MONGODB_URI
           scope: RUN_TIME
           type: SECRET
-          # Set this to your MongoDB Atlas or external MongoDB connection string
-          # Example: mongodb+srv://username:password@cluster.mongodb.net/loan-advisor
         - key: JWT_SECRET
           scope: RUN_TIME
           type: SECRET
-          # Generate a secure secret using: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
         - key: JWT_EXPIRES_IN
           value: "7d"
       
