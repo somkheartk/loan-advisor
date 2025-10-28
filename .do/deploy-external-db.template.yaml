@@ -10,6 +10,12 @@ spec:
   # Backend Service - Node.js API ($5/month Basic tier)
   services:
     - name: api
+      # Source configuration
+      github:
+        repo: somkheartk/loan-advisor
+        branch: main
+        deploy_on_push: true
+      
       # Build configuration
       source_dir: /backend
       build_command: npm ci && npm run build
