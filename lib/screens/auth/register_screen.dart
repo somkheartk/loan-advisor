@@ -3,6 +3,7 @@ import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/datasources/local_data_source.dart';
+import '../../data/datasources/social_auth_data_source.dart';
 import '../main/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -26,7 +27,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     final dataSource = LocalDataSource();
-    final repository = AuthRepositoryImpl(dataSource);
+    final socialAuthDataSource = SocialAuthDataSource();
+    final repository = AuthRepositoryImpl(dataSource, socialAuthDataSource);
     _registerUseCase = RegisterUseCase(repository);
     _loginUseCase = LoginUseCase(repository);
   }

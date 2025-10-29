@@ -3,6 +3,7 @@ import '../domain/usecases/get_current_user_usecase.dart';
 import '../domain/usecases/logout_usecase.dart';
 import '../data/repositories/auth_repository_impl.dart';
 import '../data/datasources/local_data_source.dart';
+import '../data/datasources/social_auth_data_source.dart';
 import 'calculators/house_loan_calculator.dart';
 import 'calculators/car_loan_calculator.dart';
 import 'calculators/personal_loan_calculator.dart';
@@ -40,7 +41,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   void initState() {
     super.initState();
     final dataSource = LocalDataSource();
-    final repository = AuthRepositoryImpl(dataSource);
+    final socialAuthDataSource = SocialAuthDataSource();
+    final repository = AuthRepositoryImpl(dataSource, socialAuthDataSource);
     _getCurrentUserUseCase = GetCurrentUserUseCase(repository);
     _logoutUseCase = LogoutUseCase(repository);
     _loadUserName();

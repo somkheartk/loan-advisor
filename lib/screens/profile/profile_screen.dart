@@ -3,6 +3,7 @@ import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/datasources/local_data_source.dart';
+import '../../data/datasources/social_auth_data_source.dart';
 import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,7 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     final dataSource = LocalDataSource();
-    final repository = AuthRepositoryImpl(dataSource);
+    final socialAuthDataSource = SocialAuthDataSource();
+    final repository = AuthRepositoryImpl(dataSource, socialAuthDataSource);
     _getCurrentUserUseCase = GetCurrentUserUseCase(repository);
     _logoutUseCase = LogoutUseCase(repository);
     _loadUserInfo();

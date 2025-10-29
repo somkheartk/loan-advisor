@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'data/datasources/local_data_source.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/main/main_navigation.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    // Firebase initialization might fail if no config is provided
+    // The app will still work with mock social auth for development
+    debugPrint('Firebase initialization failed: $e');
+  }
+  
   runApp(const LoanAdvisorApp());
 }
 
