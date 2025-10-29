@@ -69,11 +69,11 @@ Backend ของ Loan Advisor เป็นระบบ REST API ที่พั
 
 | เอกสาร | คำอธิบาย | จำนวนบรรทัด |
 |--------|----------|-------------|
-| **[📖 Backend Manual](backend/BACKEND_MANUAL_TH.md)** | คู่มือ Backend ฉบับสมบูรณ์ | 1,100+ |
-| **[🏛️ Backend TH](backend/BACKEND_TH.md)** | สถาปัตยกรรมและโครงสร้าง | 512 |
+| **[📖 Backend Manual](backend/BACKEND_MANUAL_TH.md)** | คู่มือ Backend ฉบับสมบูรณ์ | 2,000+ |
+| **[🏛️ Backend TH](backend/BACKEND_TH.md)** | สถาปัตยกรรมและโครงสร้าง | 520 |
 | **[📡 API Guide](backend/API_GUIDE_TH.md)** | คู่มือการใช้งาน API | 770 |
 | **[🗄️ Database Schema](backend/DATABASE_SCHEMA_TH.md)** | โครงสร้างฐานข้อมูล | 526 |
-| **[🏗️ Clean Architecture Guide](backend/CLEAN_ARCHITECTURE_GUIDE_TH.md)** | คู่มือ Clean Architecture | 700+ |
+| **[🏗️ Clean Architecture Guide](backend/CLEAN_ARCHITECTURE_GUIDE_TH.md)** | คู่มือ Clean Architecture | 1,300+ |
 | **[📚 Documentation Index](backend/DOCUMENTATION_INDEX_TH.md)** | ศูนย์รวมเอกสาร | - |
 
 ### 🚀 Quick Start Backend
