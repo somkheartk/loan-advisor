@@ -87,12 +87,19 @@ cd android
         <string>Editor</string>
         <key>CFBundleURLSchemes</key>
         <array>
-            <!-- Reversed client ID from GoogleService-Info.plist -->
-            <string>com.googleusercontent.apps.YOUR-CLIENT-ID</string>
+            <!-- Replace with REVERSED_CLIENT_ID from GoogleService-Info.plist -->
+            <!-- Example: com.googleusercontent.apps.123456789012-abcdefghijklmnopqrstuvwxyz123456 -->
+            <string>com.googleusercontent.apps.REPLACE_WITH_YOUR_REVERSED_CLIENT_ID</string>
         </array>
     </dict>
 </array>
 ```
+
+**To find your REVERSED_CLIENT_ID:**
+1. Open `ios/Runner/GoogleService-Info.plist`
+2. Find the `<key>REVERSED_CLIENT_ID</key>` entry
+3. Copy the `<string>` value below it
+4. Replace the placeholder above with that value
 
 ## Apple Sign-In Setup
 
