@@ -13,6 +13,98 @@
 
 ---
 
+## 🖥️ Backend API
+
+### ภาพรวม Backend
+
+Backend ของ Loan Advisor เป็นระบบ REST API ที่พัฒนาด้วย **NestJS** และใช้ **MongoDB** เป็นฐานข้อมูล รองรับการจัดการผู้ใช้และการยืนยันตัวตนผ่าน JWT Token
+
+### 🎯 คุณสมบัติ Backend
+
+- **🔐 ระบบยืนยันตัวตน (Authentication)**
+  - ลงทะเบียนผู้ใช้ใหม่ (Register)
+  - เข้าสู่ระบบ (Login) 
+  - JWT Token Authentication (หมดอายุ 7 วัน)
+  
+- **👤 การจัดการผู้ใช้ (User Management)**
+  - ดูข้อมูลโปรไฟล์ผู้ใช้
+  - จัดเก็บข้อมูลใน MongoDB
+  
+- **🔒 ความปลอดภัย (Security)**
+  - เข้ารหัสรหัสผ่านด้วย Bcrypt (10 rounds)
+  - JWT Token Authentication
+  - Input Validation ทุก Request
+  - ป้องกัน NoSQL Injection
+  - CORS Configuration
+  
+- **📦 พร้อม Deploy**
+  - Docker & Docker Compose Support
+  - Deploy ไปยัง DigitalOcean คลิกเดียว
+  - Environment Variables Configuration
+
+### 🛠️ เทคโนโลยีที่ใช้
+
+| เทคโนโลยี | เวอร์ชัน | หน้าที่ |
+|-----------|---------|--------|
+| **NestJS** | 11.x | Node.js Framework |
+| **MongoDB** | 8.x | NoSQL Database |
+| **Mongoose** | 8.x | MongoDB ODM |
+| **JWT** | - | Token Authentication |
+| **Passport** | - | Auth Middleware |
+| **Bcrypt** | 6.x | Password Hashing |
+| **TypeScript** | 5.x | Type Safety |
+| **Docker** | - | Containerization |
+
+### 📡 API Endpoints
+
+#### สาธารณะ (Public Endpoints)
+- `GET /health` - ตรวจสอบสถานะระบบ
+- `POST /auth/register` - ลงทะเบียนผู้ใช้ใหม่
+- `POST /auth/login` - เข้าสู่ระบบ
+
+#### ต้องมี JWT Token (Protected Endpoints)
+- `GET /users/profile` - ดูข้อมูลโปรไฟล์ผู้ใช้
+
+### 📚 เอกสารภาษาไทย Backend
+
+| เอกสาร | คำอธิบาย | จำนวนบรรทัด |
+|--------|----------|-------------|
+| **[📖 Backend Manual](backend/BACKEND_MANUAL_TH.md)** | คู่มือ Backend ฉบับสมบูรณ์ | 2,000+ |
+| **[🏛️ Backend TH](backend/BACKEND_TH.md)** | สถาปัตยกรรมและโครงสร้าง | 520 |
+| **[📡 API Guide](backend/API_GUIDE_TH.md)** | คู่มือการใช้งาน API | 770 |
+| **[🗄️ Database Schema](backend/DATABASE_SCHEMA_TH.md)** | โครงสร้างฐานข้อมูล | 526 |
+| **[🏗️ Clean Architecture Guide](backend/CLEAN_ARCHITECTURE_GUIDE_TH.md)** | คู่มือ Clean Architecture | 1,300+ |
+| **[📚 Documentation Index](backend/DOCUMENTATION_INDEX_TH.md)** | ศูนย์รวมเอกสาร | - |
+
+### 🚀 Quick Start Backend
+
+```bash
+# 1. เข้าไปที่โฟลเดอร์ backend
+cd backend
+
+# 2. ติดตั้ง dependencies
+npm install
+
+# 3. ตั้งค่า environment variables
+cp .env.example .env
+# แก้ไข .env ใส่ JWT_SECRET และ MONGODB_URI
+
+# 4. รัน Backend ด้วย Docker (แนะนำ)
+docker-compose up -d
+
+# หรือ รันแบบ Development
+npm run start:dev
+```
+
+### 📖 เอกสารเพิ่มเติม
+
+- **[Backend README (English)](backend/README.md)** - เอกสารภาษาอังกฤษ
+- **[API Testing Guide](backend/API_TESTING.md)** - คู่มือทดสอบ API
+- **[Implementation Summary](backend/IMPLEMENTATION_SUMMARY.md)** - สรุปการพัฒนา
+- **[Deploy Guide](DEPLOY_BACKEND.md)** - คู่มือ Deploy
+
+---
+
 ## 📚 คู่มือสำหรับนักพัฒนา (Developer Guide)
 
 ### 🚀 เริ่มต้นอย่างรวดเร็ว (Quick Start)
