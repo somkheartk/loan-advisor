@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/google_login_usecase.dart';
-import '../../domain/usecases/apple_login_usecase.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/datasources/local_data_source.dart';
-import '../../data/datasources/social_auth_data_source.dart';
 import 'register_screen.dart';
 import '../main/main_navigation.dart';
-import 'dart:io' show Platform;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,19 +18,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   late final LoginUseCase _loginUseCase;
-  late final GoogleLoginUseCase _googleLoginUseCase;
-  late final AppleLoginUseCase _appleLoginUseCase;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     final dataSource = LocalDataSource();
-    final socialAuthDataSource = SocialAuthDataSource();
-    final repository = AuthRepositoryImpl(dataSource, socialAuthDataSource);
+    final repository = AuthRepositoryImpl(dataSource);
     _loginUseCase = LoginUseCase(repository);
-    _googleLoginUseCase = GoogleLoginUseCase(repository);
-    _appleLoginUseCase = AppleLoginUseCase(repository);
   }
 
   @override
@@ -75,52 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _fillMockCredentials() {
     _emailController.text = 'test@email.com';
     _passwordController.text = '123456';
-  }
-
-  Future<void> _loginWithGoogle() async {
-    setState(() => _isLoading = true);
-
-    final user = await _googleLoginUseCase.execute();
-
-    setState(() => _isLoading = false);
-
-    if (!mounted) return;
-
-    if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const MainNavigation()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('ไม่สามารถเข้าสู่ระบบด้วย Google ได้'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  Future<void> _loginWithApple() async {
-    setState(() => _isLoading = true);
-
-    final user = await _appleLoginUseCase.execute();
-
-    setState(() => _isLoading = false);
-
-    if (!mounted) return;
-
-    if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const MainNavigation()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('ไม่สามารถเข้าสู่ระบบด้วย Apple ได้'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
   }
 
   @override
@@ -308,92 +253,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                           ),
-                          const SizedBox(height: 24),
-
-                          // Divider with "หรือ"
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Divider(
-                                  color: Colors.grey.shade400,
-                                  thickness: 1,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  'หรือ',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Divider(
-                                  color: Colors.grey.shade400,
-                                  thickness: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-
-                          // Social Login Buttons
-                          OutlinedButton.icon(
-                            onPressed: _isLoading ? null : _loginWithGoogle,
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              side: BorderSide(color: Colors.grey.shade300),
-                            ),
-                            icon: Image.network(
-                              'https://www.google.com/favicon.ico',
-                              height: 24,
-                              width: 24,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.g_mobiledata, size: 24),
-                            ),
-                            label: const Text(
-                              'เข้าสู่ระบบด้วย Google',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF333333),
-                              ),
-                            ),
-                          ),
-                          if (Platform.isIOS) ...[
-                            const SizedBox(height: 12),
-                            OutlinedButton.icon(
-                              onPressed: _isLoading ? null : _loginWithApple,
-                              style: OutlinedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                side: BorderSide(color: Colors.grey.shade300),
-                                backgroundColor: Colors.black,
-                              ),
-                              icon: const Icon(
-                                Icons.apple,
-                                size: 24,
-                                color: Colors.white,
-                              ),
-                              label: const Text(
-                                'เข้าสู่ระบบด้วย Apple',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
                         ],
                       ),
                     ),

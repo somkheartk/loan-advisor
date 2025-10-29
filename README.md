@@ -4,15 +4,6 @@
 
 ---
 
-## 🚀 Deploy Backend
-
-[![Deploy to DigitalOcean](backend/.do/deploy-button.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/somkheartk/loan-advisor/tree/main)
-
-**Deploy Backend ไปยัง DigitalOcean ได้ในคลิกเดียว - เริ่มต้นเพียง $5/เดือน!**  
-📖 [คู่มือการ Deploy](DEPLOY_BACKEND.md) | [Backend Documentation](backend/README.md)
-
----
-
 ## 🖥️ Backend API
 
 ### ภาพรวม Backend
@@ -37,9 +28,8 @@ Backend ของ Loan Advisor เป็นระบบ REST API ที่พั
   - ป้องกัน NoSQL Injection
   - CORS Configuration
   
-- **📦 พร้อม Deploy**
+- **📦 พร้อมพัฒนา**
   - Docker & Docker Compose Support
-  - Deploy ไปยัง DigitalOcean คลิกเดียว
   - Environment Variables Configuration
 
 ### 🛠️ เทคโนโลยีที่ใช้
