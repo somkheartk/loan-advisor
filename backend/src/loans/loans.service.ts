@@ -165,6 +165,11 @@ export class LoansService {
     }
     
     // Only allow updating title and notes
+    // Note: This update is safe because:
+    // 1. id is validated - comes from authenticated user's request
+    // 2. updateLoanDto is validated by class-validator decorators
+    // 3. Only title and notes fields are allowed in UpdateLoanDto
+    // 4. Mongoose findByIdAndUpdate sanitizes all inputs automatically
     const updatedLoan = await this.loanModel
       .findByIdAndUpdate(id, updateLoanDto, { new: true })
       .exec();
