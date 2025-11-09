@@ -246,6 +246,389 @@ curl -X GET http://localhost:3000/users/profile \
 
 ---
 
+## Loan Management Endpoints
+
+### 5. คำนวณสินเชื่อ (Calculate Loan)
+
+คำนวณค่าผ่อนชำระสินเชื่อโดยไม่บันทึกลงฐานข้อมูล
+
+**Endpoint:** `POST /loans/calculate`
+
+**Authentication:** ✅ Required (JWT Token)
+
+**Request Headers:**
+```
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "loanType": "house",
+  "principalAmount": 3000000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360,
+  "downPayment": 300000
+}
+```
+
+**Loan Types:**
+- `house` - สินเชื่อบ้าน
+- `car` - สินเชื่อรถยนต์
+- `personal` - สินเชื่อส่วนบุคคล
+- `other` - สินเชื่ออื่นๆ
+
+**Validation Rules:**
+- `loanType`: ต้องเป็น house, car, personal, หรือ other
+- `principalAmount`: ต้องเป็นตัวเลข >= 0, Required
+- `annualInterestRate`: อัตราดอกเบี้ยต่อปี (%), >= 0, Required
+- `termInMonths`: จำนวนเดือน >= 1, Required
+- `downPayment`: เงินดาวน์ >= 0, Optional
+
+**cURL Example:**
+```bash
+curl -X POST http://localhost:3000/loans/calculate \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "loanType": "car",
+    "principalAmount": 800000,
+    "annualInterestRate": 2.99,
+    "termInMonths": 60,
+    "downPayment": 80000
+  }'
+```
+
+**Response (200 OK):**
+```json
+{
+  "monthlyPayment": 12920.85,
+  "totalPayment": 775251.00,
+  "totalInterest": 55251.00,
+  "loanAmount": 720000.00,
+  "principalAmount": 800000,
+  "downPayment": 80000,
+  "annualInterestRate": 2.99,
+  "termInMonths": 60
+}
+```
+
+---
+
+### 6. บันทึกการคำนวณสินเชื่อ (Save Loan Calculation)
+
+บันทึกผลการคำนวณสินเชื่อลงฐานข้อมูล
+
+**Endpoint:** `POST /loans`
+
+**Authentication:** ✅ Required (JWT Token)
+
+**Request Headers:**
+```
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "loanType": "house",
+  "principalAmount": 3000000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360,
+  "downPayment": 300000,
+  "title": "บ้านหลังใหม่",
+  "notes": "บ้านเดี่ยว 2 ชั้น ใกล้ BTS"
+}
+```
+
+**cURL Example:**
+```bash
+curl -X POST http://localhost:3000/loans \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "loanType": "house",
+    "principalAmount": 3000000,
+    "annualInterestRate": 3.5,
+    "termInMonths": 360,
+    "downPayment": 300000,
+    "title": "บ้านหลังใหม่"
+  }'
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "6543a1b2c3d4e5f6a7b8c9d0",
+  "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+  "loanType": "house",
+  "principalAmount": 3000000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360,
+  "downPayment": 300000,
+  "monthlyPayment": 12158.88,
+  "totalPayment": 4377196.80,
+  "totalInterest": 1677196.80,
+  "loanAmount": 2700000,
+  "title": "บ้านหลังใหม่",
+  "notes": "บ้านเดี่ยว 2 ชั้น ใกล้ BTS",
+  "createdAt": "2025-11-09T04:30:00.000Z",
+  "updatedAt": "2025-11-09T04:30:00.000Z"
+}
+```
+
+---
+
+### 7. ดูประวัติการคำนวณทั้งหมด (Get All Loans)
+
+ดึงข้อมูลการคำนวณสินเชื่อทั้งหมดของผู้ใช้
+
+**Endpoint:** `GET /loans`
+
+**Authentication:** ✅ Required (JWT Token)
+
+**Query Parameters (Optional):**
+- `type` - กรองตามประเภทสินเชื่อ (house, car, personal, other)
+
+**Request Headers:**
+```
+Authorization: Bearer <your-jwt-token>
+Content-Type: application/json
+```
+
+**cURL Example:**
+```bash
+# ดูทั้งหมด
+curl -X GET http://localhost:3000/loans \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# กรองเฉพาะสินเชื่อบ้าน
+curl -X GET "http://localhost:3000/loans?type=house" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (200 OK):**
+```json
+[
+  {
+    "id": "6543a1b2c3d4e5f6a7b8c9d0",
+    "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+    "loanType": "house",
+    "principalAmount": 3000000,
+    "annualInterestRate": 3.5,
+    "termInMonths": 360,
+    "downPayment": 300000,
+    "monthlyPayment": 12158.88,
+    "totalPayment": 4377196.80,
+    "totalInterest": 1677196.80,
+    "loanAmount": 2700000,
+    "title": "บ้านหลังใหม่",
+    "createdAt": "2025-11-09T04:30:00.000Z",
+    "updatedAt": "2025-11-09T04:30:00.000Z"
+  },
+  {
+    "id": "6543a1b2c3d4e5f6a7b8c9d2",
+    "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+    "loanType": "car",
+    "principalAmount": 800000,
+    "annualInterestRate": 2.99,
+    "termInMonths": 60,
+    "downPayment": 80000,
+    "monthlyPayment": 12920.85,
+    "totalPayment": 775251.00,
+    "totalInterest": 55251.00,
+    "loanAmount": 720000,
+    "title": "รถยนต์คันใหม่",
+    "createdAt": "2025-11-09T04:25:00.000Z",
+    "updatedAt": "2025-11-09T04:25:00.000Z"
+  }
+]
+```
+
+---
+
+### 8. ดูการคำนวณเฉพาะรายการ (Get Loan by ID)
+
+ดึงข้อมูลการคำนวณสินเชื่อรายการเดียว
+
+**Endpoint:** `GET /loans/:id`
+
+**Authentication:** ✅ Required (JWT Token)
+
+**cURL Example:**
+```bash
+curl -X GET http://localhost:3000/loans/6543a1b2c3d4e5f6a7b8c9d0 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": "6543a1b2c3d4e5f6a7b8c9d0",
+  "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+  "loanType": "house",
+  "principalAmount": 3000000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360,
+  "downPayment": 300000,
+  "monthlyPayment": 12158.88,
+  "totalPayment": 4377196.80,
+  "totalInterest": 1677196.80,
+  "loanAmount": 2700000,
+  "title": "บ้านหลังใหม่",
+  "notes": "บ้านเดี่ยว 2 ชั้น ใกล้ BTS",
+  "createdAt": "2025-11-09T04:30:00.000Z",
+  "updatedAt": "2025-11-09T04:30:00.000Z"
+}
+```
+
+**Error Responses:**
+
+**404 Not Found:**
+```json
+{
+  "statusCode": 404,
+  "message": "Loan not found",
+  "error": "Not Found"
+}
+```
+
+**403 Forbidden:**
+```json
+{
+  "statusCode": 403,
+  "message": "You do not have access to this loan",
+  "error": "Forbidden"
+}
+```
+
+---
+
+### 9. แก้ไขรายละเอียด (Update Loan)
+
+แก้ไขชื่อและหมายเหตุของการคำนวณสินเชื่อ
+
+**Endpoint:** `PATCH /loans/:id`
+
+**Authentication:** ✅ Required (JWT Token)
+
+**Request Body:**
+```json
+{
+  "title": "บ้านหลังใหม่ (แก้ไข)",
+  "notes": "บ้านเดี่ยว 2 ชั้น ใกล้ BTS - ดาวน์แล้ว 10%"
+}
+```
+
+**cURL Example:**
+```bash
+curl -X PATCH http://localhost:3000/loans/6543a1b2c3d4e5f6a7b8c9d0 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "บ้านหลังใหม่ (แก้ไข)",
+    "notes": "อัพเดทแล้ว"
+  }'
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": "6543a1b2c3d4e5f6a7b8c9d0",
+  "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+  "loanType": "house",
+  "principalAmount": 3000000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360,
+  "downPayment": 300000,
+  "monthlyPayment": 12158.88,
+  "totalPayment": 4377196.80,
+  "totalInterest": 1677196.80,
+  "loanAmount": 2700000,
+  "title": "บ้านหลังใหม่ (แก้ไข)",
+  "notes": "อัพเดทแล้ว",
+  "createdAt": "2025-11-09T04:30:00.000Z",
+  "updatedAt": "2025-11-09T04:35:00.000Z"
+}
+```
+
+---
+
+### 10. ลบการคำนวณ (Delete Loan)
+
+ลบการคำนวณสินเชื่อ
+
+**Endpoint:** `DELETE /loans/:id`
+
+**Authentication:** ✅ Required (JWT Token)
+
+**cURL Example:**
+```bash
+curl -X DELETE http://localhost:3000/loans/6543a1b2c3d4e5f6a7b8c9d0 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (200 OK):**
+```
+(Empty response body)
+```
+
+**Error Responses:**
+
+**404 Not Found:**
+```json
+{
+  "statusCode": 404,
+  "message": "Loan not found",
+  "error": "Not Found"
+}
+```
+
+**403 Forbidden:**
+```json
+{
+  "statusCode": 403,
+  "message": "You do not have access to this loan",
+  "error": "Forbidden"
+}
+```
+
+---
+
+### 11. สรุปสถิติสินเชื่อ (Get Loan Statistics)
+
+ดูสถิติการคำนวณสินเชื่อทั้งหมดของผู้ใช้
+
+**Endpoint:** `GET /loans/statistics`
+
+**Authentication:** ✅ Required (JWT Token)
+
+**cURL Example:**
+```bash
+curl -X GET http://localhost:3000/loans/statistics \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (200 OK):**
+```json
+{
+  "totalLoans": 5,
+  "byType": {
+    "house": 2,
+    "car": 2,
+    "personal": 1,
+    "other": 0
+  },
+  "totalPrincipal": 7800000.00,
+  "totalMonthlyPayment": 65420.50,
+  "totalInterest": 3250000.00
+}
+```
+
+---
+
 ## JWT Token
 
 ### โครงสร้าง JWT Token
@@ -747,12 +1130,26 @@ v2: http://localhost:3000/v2/auth/login
 
 ## สรุป
 
-API ของ Loan Advisor มี Endpoints หลัก 4 ตัว:
+API ของ Loan Advisor มี Endpoints หลัก 11 ตัว:
 
+### Public Endpoints (ไม่ต้อง Login)
 1. **GET /health** - Health Check
+
+### Authentication Endpoints (ไม่ต้อง Login)
 2. **POST /auth/register** - ลงทะเบียน
 3. **POST /auth/login** - เข้าสู่ระบบ
-4. **GET /users/profile** - ดึงข้อมูล Profile (ต้อง Login)
+
+### User Endpoints (ต้อง Login)
+4. **GET /users/profile** - ดึงข้อมูล Profile
+
+### Loan Management Endpoints (ต้อง Login)
+5. **POST /loans/calculate** - คำนวณสินเชื่อ (ไม่บันทึก)
+6. **POST /loans** - บันทึกการคำนวณสินเชื่อ
+7. **GET /loans** - ดูประวัติการคำนวณทั้งหมด (รองรับ filter ตาม type)
+8. **GET /loans/:id** - ดูการคำนวณเฉพาะรายการ
+9. **PATCH /loans/:id** - แก้ไขรายละเอียด (title, notes)
+10. **DELETE /loans/:id** - ลบการคำนวณ
+11. **GET /loans/statistics** - สรุปสถิติสินเชื่อ
 
 **การยืนยันตัวตน:**
 - ใช้ JWT Token
@@ -763,7 +1160,14 @@ API ของ Loan Advisor มี Endpoints หลัก 4 ตัว:
 - Password Hashing (bcrypt)
 - Input Validation
 - JWT Authentication
+- User Authorization (ป้องกันการเข้าถึงข้อมูลของผู้อื่น)
 - CORS Protection
+
+**ประเภทสินเชื่อที่รองรับ:**
+- `house` - สินเชื่อบ้าน
+- `car` - สินเชื่อรถยนต์
+- `personal` - สินเชื่อส่วนบุคคล
+- `other` - สินเชื่ออื่นๆ
 
 **เอกสารที่เกี่ยวข้อง:**
 - [คู่มือ Backend (ภาษาไทย)](BACKEND_TH.md)

@@ -475,6 +475,254 @@ db.setProfilingLevel(1, { slowms: 100 })
 db.system.profile.find().sort({ ts: -1 }).limit(5)
 ```
 
+---
+
+### 2. Loans Collection
+
+Collection นี้เก็บข้อมูลการคำนวณสินเชื่อที่ผู้ใช้บันทึกไว้
+
+#### ชื่อ Collection
+```
+loans
+```
+
+#### Schema Definition
+
+```typescript
+export enum LoanType {
+  HOUSE = 'house',
+  CAR = 'car',
+  PERSONAL = 'personal',
+  OTHER = 'other',
+}
+
+@Schema({ timestamps: true })
+export class Loan {
+  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
+
+  @Prop({ required: true, enum: Object.values(LoanType) })
+  loanType: LoanType;
+
+  @Prop({ required: true })
+  principalAmount: number;
+
+  @Prop({ required: true })
+  annualInterestRate: number;
+
+  @Prop({ required: true })
+  termInMonths: number;
+
+  @Prop()
+  downPayment?: number;
+
+  @Prop({ required: true })
+  monthlyPayment: number;
+
+  @Prop({ required: true })
+  totalPayment: number;
+
+  @Prop({ required: true })
+  totalInterest: number;
+
+  @Prop({ required: true })
+  loanAmount: number;
+
+  @Prop()
+  title?: string;
+
+  @Prop()
+  notes?: string;
+
+  @Prop()
+  createdAt?: Date;
+
+  @Prop()
+  updatedAt?: Date;
+}
+```
+
+#### ฟิลด์ (Fields)
+
+| ชื่อฟิลด์ | ประเภทข้อมูล | Required | Default | คำอธิบาย |
+|----------|-------------|----------|---------|----------|
+| `_id` | ObjectId | ✅ | auto-generated | ID ของเอกสาร |
+| `userId` | ObjectId | ✅ | - | อ้างอิงถึง User ที่เป็นเจ้าของ |
+| `loanType` | String | ✅ | - | ประเภทสินเชื่อ (house, car, personal, other) |
+| `principalAmount` | Number | ✅ | - | ราคาทรัพย์สินหรือเงินกู้ต้นทุน |
+| `annualInterestRate` | Number | ✅ | - | อัตราดอกเบี้ยต่อปี (%) |
+| `termInMonths` | Number | ✅ | - | ระยะเวลาผ่อนชำระ (เดือน) |
+| `downPayment` | Number | ❌ | - | เงินดาวน์ |
+| `monthlyPayment` | Number | ✅ | - | ค่าผ่อนรายเดือน (คำนวณโดยระบบ) |
+| `totalPayment` | Number | ✅ | - | ยอดรวมที่ต้องจ่าย (คำนวณโดยระบบ) |
+| `totalInterest` | Number | ✅ | - | ดอกเบี้ยรวม (คำนวณโดยระบบ) |
+| `loanAmount` | Number | ✅ | - | จำนวนเงินกู้จริง (หลังหักเงินดาวน์) |
+| `title` | String | ❌ | - | ชื่อหรือหัวข้อของการคำนวณ |
+| `notes` | String | ❌ | - | หมายเหตุเพิ่มเติม |
+| `createdAt` | Date | ❌ | auto-generated | วันเวลาที่สร้าง |
+| `updatedAt` | Date | ❌ | auto-generated | วันเวลาที่อัพเดทล่าสุด |
+
+#### ประเภทสินเชื่อ (Loan Types)
+
+| ค่า | ชื่อภาษาไทย | คำอธิบาย |
+|-----|------------|----------|
+| `house` | สินเชื่อบ้าน | สำหรับการซื้อบ้าน คอนโด ที่ดิน |
+| `car` | สินเชื่อรถยนต์ | สำหรับการซื้อรถยนต์ รถจักรยานยนต์ |
+| `personal` | สินเชื่อส่วนบุคคล | สินเชื่อสำหรับใช้จ่ายส่วนตัว |
+| `other` | สินเชื่ออื่นๆ | สินเชื่อประเภทอื่นๆ |
+
+#### ข้อจำกัด (Constraints)
+
+1. **User Reference:**
+   - `userId` ต้องเป็น ObjectId ที่อ้างอิงถึง User ที่มีอยู่
+   - ใช้ `ref: 'User'` สำหรับ population
+
+2. **Loan Type Validation:**
+   - `loanType` ต้องเป็นค่าใน enum เท่านั้น (house, car, personal, other)
+
+3. **Number Validations:**
+   - `principalAmount` >= 0
+   - `annualInterestRate` >= 0
+   - `termInMonths` >= 1
+   - `downPayment` >= 0 (ถ้ามี)
+
+4. **Calculated Fields:**
+   - `monthlyPayment`, `totalPayment`, `totalInterest`, `loanAmount` คำนวณโดยระบบ
+   - ใช้สูตร Amortization มาตรฐาน
+
+#### Indexes
+
+```typescript
+// Index หลัก (Auto-created)
+{ _id: 1 }          // Primary Index
+
+// Index เพิ่มเติม (ประกาศใน Schema)
+LoanSchema.index({ userId: 1, createdAt: -1 });  // สำหรับ query loans ของ user
+LoanSchema.index({ userId: 1, loanType: 1 });    // สำหรับ filter ตาม type
+```
+
+**คำอธิบาย:**
+- **userId + createdAt (desc):** ใช้เมื่อดึงรายการ loans ของ user เรียงตามวันที่ล่าสุด
+- **userId + loanType:** ใช้เมื่อกรอง loans ตามประเภท (เช่น เฉพาะสินเชื่อบ้าน)
+
+#### ตัวอย่างข้อมูล (Sample Documents)
+
+**สินเชื่อบ้าน:**
+```json
+{
+  "_id": "6543a1b2c3d4e5f6a7b8c9d0",
+  "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+  "loanType": "house",
+  "principalAmount": 3000000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360,
+  "downPayment": 300000,
+  "monthlyPayment": 12158.88,
+  "totalPayment": 4377196.80,
+  "totalInterest": 1677196.80,
+  "loanAmount": 2700000,
+  "title": "บ้านหลังใหม่",
+  "notes": "บ้านเดี่ยว 2 ชั้น ใกล้ BTS",
+  "createdAt": "2025-11-09T04:30:00.000Z",
+  "updatedAt": "2025-11-09T04:30:00.000Z"
+}
+```
+
+**สินเชื่อรถยนต์:**
+```json
+{
+  "_id": "6543a1b2c3d4e5f6a7b8c9d2",
+  "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+  "loanType": "car",
+  "principalAmount": 800000,
+  "annualInterestRate": 2.99,
+  "termInMonths": 60,
+  "downPayment": 80000,
+  "monthlyPayment": 12920.85,
+  "totalPayment": 775251.00,
+  "totalInterest": 55251.00,
+  "loanAmount": 720000,
+  "title": "รถยนต์คันใหม่",
+  "notes": "Honda Civic 2024",
+  "createdAt": "2025-11-09T04:25:00.000Z",
+  "updatedAt": "2025-11-09T04:25:00.000Z"
+}
+```
+
+**สินเชื่อส่วนบุคคล:**
+```json
+{
+  "_id": "6543a1b2c3d4e5f6a7b8c9d3",
+  "userId": "6543a1b2c3d4e5f6a7b8c9d1",
+  "loanType": "personal",
+  "principalAmount": 200000,
+  "annualInterestRate": 8.5,
+  "termInMonths": 36,
+  "monthlyPayment": 6313.46,
+  "totalPayment": 227284.56,
+  "totalInterest": 27284.56,
+  "loanAmount": 200000,
+  "title": "สินเชื่อส่วนบุคคล",
+  "createdAt": "2025-11-09T04:20:00.000Z",
+  "updatedAt": "2025-11-09T04:20:00.000Z"
+}
+```
+
+#### Relationships
+
+**User → Loans (One-to-Many)**
+
+```
+User (1) ─────< Loans (Many)
+  _id           userId
+```
+
+- ผู้ใช้หนึ่งคนสามารถมีการคำนวณสินเชื่อได้หลายรายการ
+- การลบ User ควรพิจารณาว่าจะลบ Loans ที่เกี่ยวข้องด้วยหรือไม่
+
+#### Query Examples
+
+**1. ดึง Loans ทั้งหมดของ User:**
+```javascript
+db.loans.find({ userId: ObjectId("6543a1b2c3d4e5f6a7b8c9d1") })
+  .sort({ createdAt: -1 })
+```
+
+**2. ดึง Loans ตามประเภท:**
+```javascript
+db.loans.find({
+  userId: ObjectId("6543a1b2c3d4e5f6a7b8c9d1"),
+  loanType: "house"
+})
+```
+
+**3. สรุปสถิติ:**
+```javascript
+db.loans.aggregate([
+  { $match: { userId: ObjectId("6543a1b2c3d4e5f6a7b8c9d1") } },
+  {
+    $group: {
+      _id: "$loanType",
+      count: { $sum: 1 },
+      totalPrincipal: { $sum: "$principalAmount" },
+      totalMonthly: { $sum: "$monthlyPayment" },
+      totalInterest: { $sum: "$totalInterest" }
+    }
+  }
+])
+```
+
+**4. Population (Join with User):**
+```javascript
+// ใน Mongoose
+await this.loanModel
+  .find({ loanType: 'house' })
+  .populate('userId', 'name email')
+  .exec();
+```
+
+---
+
 ## Troubleshooting
 
 ### ปัญหา: Duplicate Key Error
@@ -512,9 +760,9 @@ E11000 duplicate key error collection: loan-advisor.users index: email_1
 
 Database Schema ของ Loan Advisor ออกแบบให้เรียบง่าย มีประสิทธิภาพ และปลอดภัย:
 
-- **Collection เดียว:** Users (ปัจจุบัน)
-- **Indexes:** Email (Unique), _id (Primary)
-- **Security:** Password Hashing, Authentication, Encryption
+- **Collections:** Users, Loans
+- **Indexes:** Email (Unique), _id (Primary), userId + createdAt, userId + loanType
+- **Security:** Password Hashing, Authentication, Encryption, User Authorization
 - **Performance:** Indexing, Connection Pooling, Query Optimization
 - **Backup:** Automated Daily Backups
 - **Monitoring:** Performance Tracking, Slow Query Detection

@@ -29,14 +29,27 @@ Deploy to DigitalOcean with one click - starting at **$5/month**!
 
 ## Features
 
+### Authentication & User Management
 - **User Registration**: Register new users with email, password, and name
 - **User Login**: Authenticate users with JWT tokens
 - **User Profile**: Get authenticated user profile information
-- **JWT Authentication**: Secure endpoints with JWT tokens
+- **JWT Authentication**: Secure endpoints with JWT tokens (7-day expiration)
+
+### Loan Management
+- **Loan Calculation**: Calculate monthly payments using standard amortization formula
+- **Save Calculations**: Save loan calculations for future reference
+- **Loan History**: View all saved loan calculations with filtering by type
+- **Loan Statistics**: Get aggregate statistics of all loans
+- **Multiple Loan Types**: Support for house, car, personal, and other loans
+- **CRUD Operations**: Full create, read, update, delete operations on saved loans
+
+### Technical Features
 - **MongoDB Integration**: Persistent data storage with MongoDB
 - **Input Validation**: Comprehensive validation for all inputs
 - **Password Hashing**: Secure password storage using bcrypt
+- **User Authorization**: Users can only access their own data
 - **CORS Enabled**: Ready for Flutter app integration
+- **Docker Support**: Easy deployment with Docker and Docker Compose
 
 ## Technologies
 
@@ -270,6 +283,105 @@ The server will start on `http://localhost:3000`
   "updatedAt": "2025-10-27T10:00:00.000Z"
 }
 ```
+
+### Loan Management
+
+#### Calculate Loan (Without Saving)
+- **POST** `/loans/calculate`
+- **Headers**: `Authorization: Bearer <jwt-token>`
+- **Body**:
+```json
+{
+  "loanType": "house",
+  "principalAmount": 3000000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360,
+  "downPayment": 300000
+}
+```
+- **Response**:
+```json
+{
+  "monthlyPayment": 12158.88,
+  "totalPayment": 4377196.80,
+  "totalInterest": 1677196.80,
+  "loanAmount": 2700000.00,
+  "principalAmount": 3000000,
+  "downPayment": 300000,
+  "annualInterestRate": 3.5,
+  "termInMonths": 360
+}
+```
+
+#### Save Loan Calculation
+- **POST** `/loans`
+- **Headers**: `Authorization: Bearer <jwt-token>`
+- **Body**:
+```json
+{
+  "loanType": "car",
+  "principalAmount": 800000,
+  "annualInterestRate": 2.99,
+  "termInMonths": 60,
+  "downPayment": 80000,
+  "title": "New Car",
+  "notes": "Honda Civic 2024"
+}
+```
+- **Response**: Saved loan object with calculated values
+
+#### Get All Loans
+- **GET** `/loans`
+- **GET** `/loans?type=house` (filter by type)
+- **Headers**: `Authorization: Bearer <jwt-token>`
+- **Response**: Array of user's saved loans
+
+#### Get Loan by ID
+- **GET** `/loans/:id`
+- **Headers**: `Authorization: Bearer <jwt-token>`
+- **Response**: Single loan object
+
+#### Update Loan
+- **PATCH** `/loans/:id`
+- **Headers**: `Authorization: Bearer <jwt-token>`
+- **Body**:
+```json
+{
+  "title": "Updated title",
+  "notes": "Updated notes"
+}
+```
+- **Response**: Updated loan object
+
+#### Delete Loan
+- **DELETE** `/loans/:id`
+- **Headers**: `Authorization: Bearer <jwt-token>`
+- **Response**: Empty (200 OK)
+
+#### Get Loan Statistics
+- **GET** `/loans/statistics`
+- **Headers**: `Authorization: Bearer <jwt-token>`
+- **Response**:
+```json
+{
+  "totalLoans": 5,
+  "byType": {
+    "house": 2,
+    "car": 2,
+    "personal": 1,
+    "other": 0
+  },
+  "totalPrincipal": 7800000.00,
+  "totalMonthlyPayment": 65420.50,
+  "totalInterest": 3250000.00
+}
+```
+
+**Supported Loan Types:**
+- `house` - Home loans
+- `car` - Car loans
+- `personal` - Personal loans
+- `other` - Other loans
 
 ## Project Structure
 
