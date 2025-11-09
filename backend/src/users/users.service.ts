@@ -36,6 +36,25 @@ export class UsersService {
     return this.toUserResponse(savedUser);
   }
 
+  async createAndReturnDocument(createUserDto: CreateUserDto): Promise<UserDocument> {
+    // Check if user already exists
+    const existingUser = await this.userModel.findOne({ email: createUserDto.email });
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    // Create user
+    const createdUser = new this.userModel({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+
+    return createdUser.save();
+  }
+
   async findByEmail(email: string): Promise<UserDocument | null> {
     // Note: This query is safe from NoSQL injection because:
     // 1. email parameter comes from validated DTO (LoginDto with @IsEmail())
